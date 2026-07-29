@@ -117,19 +117,15 @@ function HeroMockup() {
     if (items) gsap.fromTo(items, { scale: 0.85, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.35, stagger: 0.04, ease: "back.out(1.2)" });
   }, [activeFilter, selPrice, searchTerm]);
 
-  // Auto-cycle: rotate categories and simulate typing
+  // Auto-cycle: rotate categories, prices, and products smoothly
   useEffect(() => {
-    const searchTerms = ["cotton", "classic", "shirt", "premium", "blue", "", "cotton", "polo"];
-    let termIdx = 0;
     const interval = setInterval(() => {
-      const nextFilter = (activeFilter + 1) % FILTER_CATEGORIES.length;
-      setActiveFilter(nextFilter);
-      setSearchTerm(searchTerms[termIdx % searchTerms.length]);
-      setSelPrice(0);
-      termIdx++;
-    }, 3000);
+      setSearchTerm("");
+      setSelPrice((prev) => (prev + 1) % PRICE_RANGES.length);
+      setActiveFilter((prev) => (prev + 1) % FILTER_CATEGORIES.length);
+    }, 3500);
     return () => clearInterval(interval);
-  }, [activeFilter]);
+  }, []);
 
   return (
     <div ref={mockupRef} className="bg-[var(--card)] rounded-2xl shadow-2xl overflow-hidden border border-[var(--border)] w-full max-w-[520px]">
