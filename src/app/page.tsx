@@ -289,9 +289,9 @@ export default function Home() {
 
       {/* HERO */}
       <section className="min-h-screen flex items-center pt-20 pb-16 bg-[var(--bg)] relative overflow-hidden">
-        <div className="absolute inset-0 animated-gradient opacity-[0.03]"/>
-        <div className="absolute top-20 -left-20 w-96 h-96 bg-[#7F54B3]/10 rounded-full blur-[100px]"/>
-        <div className="absolute bottom-20 -right-20 w-[30rem] h-[30rem] bg-[#2271B1]/8 rounded-full blur-[100px]"/>
+        <div className="absolute inset-0 animated-gradient opacity-[0.03] pointer-events-none"/>
+        <div className="absolute top-20 -left-20 w-96 h-96 bg-[#7F54B3]/10 rounded-full blur-[100px] pointer-events-none"/>
+        <div className="absolute bottom-20 -right-20 w-[30rem] h-[30rem] bg-[#2271B1]/8 rounded-full blur-[100px] pointer-events-none"/>
         <div className="max-w-7xl mx-auto px-6 w-full">
           <div className="grid lg:grid-cols-2 gap-10 items-center">
             <div>
