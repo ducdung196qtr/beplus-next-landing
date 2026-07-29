@@ -1,0 +1,32 @@
+@import "tailwindcss";
+
+:root {
+  --primary: #2271B1;
+  --primary-dark: #1a5a8c;
+  --secondary: #7F54B3;
+  --accent: #46B450;
+  --bg: #ffffff;
+  --bg-alt: #F8F9FA;
+  --text: #1E1E1E;
+  --text-muted: #6B7280;
+  --border: #E5E7EB;
+  --gradient: linear-gradient(135deg, #2271B1 0%, #7F54B3 100%);
+}
+
+html { scroll-behavior: smooth; }
+
+.section-padding { padding: 6rem 2rem; }
+@media (max-width: 768px) { .section-padding { padding: 4rem 1.5rem; } }
+
+.gradient-text {
+  background: var(--gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.glass {
+  background: rgba(255,255,255,0.8);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+}
