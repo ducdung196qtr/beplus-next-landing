@@ -98,6 +98,8 @@ function HeroMockup() {
   const [selPrice, setSelPrice] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
   const mockupRef = useRef<HTMLDivElement>(null);
+  const idleTimer = useRef<NodeJS.Timeout | null>(null);
+  const cycleRef = useRef<NodeJS.Timeout | null>(null);
   const cat = FILTER_CATEGORIES[activeFilter];
   const products = CATEGORY_PRODUCTS[cat.label] || [];
   const filtered = searchTerm
@@ -106,25 +108,36 @@ function HeroMockup() {
       ? products.filter(p => { const price = parseFloat(p.price.replace("$", "")); const ranges = [[0,25],[25,50],[50,100],[100,999]]; const [lo,hi]=ranges[selPrice-1]; return price>=lo&&price<hi; })
       : products;
 
-  // Auto-cycle through categories and simulate typing
+  const startCycle = () => {
+    stopCycle();
+    cycleRef.current = setInterval(() => {
+      setActiveFilter(prev => (prev + 1) % FILTER_CATEGORIES.length);
+    }, 3000);
+  };
+  const stopCycle = () => { if (cycleRef.current) { clearInterval(cycleRef.current); cycleRef.current = null; } };
+
+  const handleUserInteraction = () => {
+    stopCycle();
+    if (idleTimer.current) clearTimeout(idleTimer.current);
+    idleTimer.current = setTimeout(() => startCycle(), 20000);
+  };
+
+  // Init animation
   useEffect(() => {
     if (!mockupRef.current) return;
     gsap.fromTo(mockupRef.current, { x: 80, opacity: 0 }, { x: 0, opacity: 1, duration: 1, ease: "power4.out", delay: 0.4 });
   }, []);
 
+  // Product card animation
   useEffect(() => {
     const items = mockupRef.current?.querySelectorAll(".product-card");
     if (items) gsap.fromTo(items, { scale: 0.85, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.35, stagger: 0.04, ease: "back.out(1.2)" });
   }, [activeFilter, selPrice, searchTerm]);
 
-  // Auto-cycle: rotate categories, prices, and products smoothly
+  // Start auto-cycle on mount
   useEffect(() => {
-    const interval = setInterval(() => {
-      setSearchTerm("");
-      setSelPrice((prev) => (prev + 1) % PRICE_RANGES.length);
-      setActiveFilter((prev) => (prev + 1) % FILTER_CATEGORIES.length);
-    }, 3500);
-    return () => clearInterval(interval);
+    startCycle();
+    return () => { stopCycle(); if (idleTimer.current) clearTimeout(idleTimer.current); };
   }, []);
 
   return (
@@ -136,12 +149,12 @@ function HeroMockup() {
       <div className="p-5">
         <div className="relative mb-4">
           <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-          <input type="text" placeholder="Search products..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)}
+          <input type="text" placeholder="Search products..." value={searchTerm} onChange={e => { handleUserInteraction(); setSearchTerm(e.target.value); }}
             className="w-full pl-10 pr-4 py-2 text-xs rounded-lg border border-[var(--border)] bg-[var(--bg)] placeholder:text-[var(--text-muted)]/50 focus:outline-none focus:border-[var(--primary)] transition-colors"/>
         </div>
         <div className="flex gap-1.5 flex-wrap mb-4">
           {FILTER_CATEGORIES.map((c, i) => (
-            <button key={i} onClick={() => { setActiveFilter(i); setSelPrice(0); setSearchTerm(""); }}
+            <button key={i} onClick={() => { handleUserInteraction(); setActiveFilter(i); setSelPrice(0); setSearchTerm(""); }}
               className="relative px-3 py-1.5 rounded-full text-[11px] font-semibold tracking-wide whitespace-nowrap"
               style={{ backgroundColor: activeFilter===i ? c.color : 'var(--bg-alt)', color: activeFilter===i ? 'white' : 'var(--text-muted)',
                 boxShadow: activeFilter===i ? `0 2px 12px ${c.color}40` : 'none', transform: activeFilter===i ? 'scale(1.05)' : 'scale(1)', transition: 'all 0.5s' }}>
@@ -151,7 +164,7 @@ function HeroMockup() {
         </div>
         <div className="flex gap-1.5 mb-4">
           {PRICE_RANGES.map((r, i) => (
-            <button key={i} onClick={() => { setSelPrice(i); setSearchTerm(""); }}
+            <button key={i} onClick={() => { handleUserInteraction(); setSelPrice(i); setSearchTerm(""); }}
               className="text-[10px] font-medium px-2 py-1 rounded-md"
               style={{ backgroundColor: selPrice===i ? 'var(--primary)' : 'var(--bg-alt)', color: selPrice===i ? 'white' : 'var(--text-muted)', transition: 'all 0.3s' }}>
               {r}
