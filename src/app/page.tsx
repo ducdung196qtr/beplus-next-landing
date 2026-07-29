@@ -275,7 +275,14 @@ export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
   useEffect(() => { if(headerRef.current) gsap.fromTo(headerRef.current,{y:-80,opacity:0},{y:0,opacity:1,duration:.7,ease:"power3.out"}); }, []);
-  const scrollTo = (id:string) => { setMenuOpen(false); document.getElementById(id)?.scrollIntoView({behavior:"smooth",block:"start"}); };
+  const scrollTo = (id:string) => {
+    setMenuOpen(false);
+    const el = document.getElementById(id);
+    if (el) {
+      const top = el.getBoundingClientRect().top + window.scrollY - 80;
+      window.scrollTo({ top, behavior: "smooth" });
+    }
+  };
   const NAV = [{id:"features",label:"Features"},{id:"how",label:"How It Works"},{id:"demo",label:"Demo"},{id:"pricing",label:"Pricing"},{id:"faq",label:"FAQ"}];
 
   return (
