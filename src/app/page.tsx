@@ -7,6 +7,8 @@ import "./globals.css";
 gsap.registerPlugin(ScrollTrigger);
 
 const GRAD = "linear-gradient(135deg, #2271B1 0%, #7F54B3 100%)";
+const LOGO_DARK = "https://beplusthemes.com/wp-content/uploads/2025/02/logo2.png";
+const LOGO_LIGHT = "https://beplusthemes.com/wp-content/uploads/2026/06/beplus-logo-e1781331865450.webp";
 
 // ─── Mockup data ───
 const FILTER_CATEGORIES = [
@@ -61,7 +63,11 @@ const CATEGORY_PRODUCTS: Record<string, { emoji: string; name: string; price: st
 };
 const PRICE_RANGES = ["All Prices", "$0-$25", "$25-$50", "$50-$100", "$100+"];
 
-// ─── Section animation ───
+const PLUGIN_URL = "https://wordpress.org/plugins/beplus-fast-product-filter-live-search-for-woocommerce/";
+const DEMO_URL = "https://beplus-fast-product-filter.vercel.app";
+const BEPLUS_URL = "https://beplusthemes.com";
+const TEMPLATES_URL = "https://beplusthemes.com/our-templates/";
+
 function AnimateSection({ children, className = "", delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -72,14 +78,13 @@ function AnimateSection({ children, className = "", delay = 0 }: { children: Rea
 }
 
 function SectionBadge({ text }: { text: string }) {
-  return <span className="text-xs font-bold tracking-[0.2em] uppercase px-3 py-1 rounded-full border border-[var(--accent)]/30 text-[var(--accent)] bg-[var(--accent)]/5">{text}</span>;
+  return <span className="inline-block text-xs font-bold tracking-[0.2em] uppercase px-3 py-1 rounded-full border border-[var(--accent)]/30 text-[var(--accent)] bg-[var(--accent)]/5">{text}</span>;
 }
 
 function Stars({ n }: { n: number }) {
   return <span className="text-yellow-500 text-[10px] tracking-tight">{"★".repeat(n)}{"☆".repeat(5-n)}</span>;
 }
 
-// ─── Gradient button component ───
 function GradBtn({ href, children, large }: { href: string; children: React.ReactNode; large?: boolean }) {
   return (
     <a href={href} target="_blank" rel="noopener noreferrer"
@@ -92,7 +97,6 @@ function GradBtn({ href, children, large }: { href: string; children: React.Reac
   );
 }
 
-// ─── Interactive Mockup ───
 function HeroMockup() {
   const [activeFilter, setActiveFilter] = useState(0);
   const [selPrice, setSelPrice] = useState(0);
@@ -110,35 +114,14 @@ function HeroMockup() {
 
   const startCycle = () => {
     stopCycle();
-    cycleRef.current = setInterval(() => {
-      setActiveFilter(prev => (prev + 1) % FILTER_CATEGORIES.length);
-    }, 3000);
+    cycleRef.current = setInterval(() => { setActiveFilter(prev => (prev + 1) % FILTER_CATEGORIES.length); }, 3000);
   };
   const stopCycle = () => { if (cycleRef.current) { clearInterval(cycleRef.current); cycleRef.current = null; } };
+  const handleUserInteraction = () => { stopCycle(); if (idleTimer.current) clearTimeout(idleTimer.current); idleTimer.current = setTimeout(() => startCycle(), 20000); };
 
-  const handleUserInteraction = () => {
-    stopCycle();
-    if (idleTimer.current) clearTimeout(idleTimer.current);
-    idleTimer.current = setTimeout(() => startCycle(), 20000);
-  };
-
-  // Init animation
-  useEffect(() => {
-    if (!mockupRef.current) return;
-    gsap.fromTo(mockupRef.current, { x: 80, opacity: 0 }, { x: 0, opacity: 1, duration: 1, ease: "power4.out", delay: 0.4 });
-  }, []);
-
-  // Product card animation
-  useEffect(() => {
-    const items = mockupRef.current?.querySelectorAll(".product-card");
-    if (items) gsap.fromTo(items, { scale: 0.85, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.35, stagger: 0.04, ease: "back.out(1.2)" });
-  }, [activeFilter, selPrice, searchTerm]);
-
-  // Start auto-cycle on mount
-  useEffect(() => {
-    startCycle();
-    return () => { stopCycle(); if (idleTimer.current) clearTimeout(idleTimer.current); };
-  }, []);
+  useEffect(() => { if (!mockupRef.current) return; gsap.fromTo(mockupRef.current, { x: 80, opacity: 0 }, { x: 0, opacity: 1, duration: 1, ease: "power4.out", delay: 0.4 }); }, []);
+  useEffect(() => { const items = mockupRef.current?.querySelectorAll(".product-card"); if (items) gsap.fromTo(items, { scale: 0.85, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.35, stagger: 0.04, ease: "back.out(1.2)" }); }, [activeFilter, selPrice, searchTerm]);
+  useEffect(() => { startCycle(); return () => { stopCycle(); if (idleTimer.current) clearTimeout(idleTimer.current); }; }, []);
 
   return (
     <div ref={mockupRef} className="bg-[var(--card)] rounded-2xl shadow-2xl overflow-hidden border border-[var(--border)] w-full max-w-[520px]">
@@ -156,8 +139,7 @@ function HeroMockup() {
           {FILTER_CATEGORIES.map((c, i) => (
             <button key={i} onClick={() => { handleUserInteraction(); setActiveFilter(i); setSelPrice(0); setSearchTerm(""); }}
               className="relative px-3 py-1.5 rounded-full text-[11px] font-semibold tracking-wide whitespace-nowrap"
-              style={{ backgroundColor: activeFilter===i ? c.color : 'var(--bg-alt)', color: activeFilter===i ? 'white' : 'var(--text-muted)',
-                boxShadow: activeFilter===i ? `0 2px 12px ${c.color}40` : 'none', transform: activeFilter===i ? 'scale(1.05)' : 'scale(1)', transition: 'all 0.5s' }}>
+              style={{ backgroundColor: activeFilter===i ? c.color : 'var(--bg-alt)', color: activeFilter===i ? 'white' : 'var(--text-muted)', boxShadow: activeFilter===i ? `0 2px 12px ${c.color}40` : 'none', transform: activeFilter===i ? 'scale(1.05)' : 'scale(1)', transition: 'all 0.5s' }}>
               <span className="mr-1">{c.icon}</span>{c.label}
             </button>
           ))}
@@ -166,9 +148,7 @@ function HeroMockup() {
           {PRICE_RANGES.map((r, i) => (
             <button key={i} onClick={() => { handleUserInteraction(); setSelPrice(i); setSearchTerm(""); }}
               className="text-[10px] font-medium px-2 py-1 rounded-md"
-              style={{ backgroundColor: selPrice===i ? 'var(--primary)' : 'var(--bg-alt)', color: selPrice===i ? 'white' : 'var(--text-muted)', transition: 'all 0.3s' }}>
-              {r}
-            </button>
+              style={{ backgroundColor: selPrice===i ? 'var(--primary)' : 'var(--bg-alt)', color: selPrice===i ? 'white' : 'var(--text-muted)', transition: 'all 0.3s' }}>{r}</button>
           ))}
         </div>
         <div className="grid grid-cols-3 gap-2.5 min-h-[200px]">
@@ -190,7 +170,6 @@ function HeroMockup() {
   );
 }
 
-// ─── Demo Tabs ───
 function DemoTabs() {
   const [tab, setTab] = useState<"filter"|"search">("filter");
   const contentRef = useRef<HTMLDivElement>(null);
@@ -199,13 +178,9 @@ function DemoTabs() {
     <div className="max-w-xl mx-auto">
       <div className="inline-flex gap-1 bg-[var(--bg-alt)] p-1 rounded-full border border-[var(--border)]">
         <button onClick={()=>setTab("filter")} className="px-6 py-2.5 rounded-full text-sm font-semibold"
-          style={{ backgroundColor: tab==="filter"?'var(--primary)':'transparent', color: tab==="filter"?'white':'var(--text-muted)', boxShadow: tab==="filter"?'var(--shadow-md)':'none', transition:'all .3s' }}>
-          Product Filter (AJAX)
-        </button>
+          style={{ backgroundColor: tab==="filter"?'var(--primary)':'transparent', color: tab==="filter"?'white':'var(--text-muted)', boxShadow: tab==="filter"?'var(--shadow-md)':'none', transition:'all .3s' }}>Product Filter (AJAX)</button>
         <button onClick={()=>setTab("search")} className="px-6 py-2.5 rounded-full text-sm font-semibold"
-          style={{ backgroundColor: tab==="search"?'var(--primary)':'transparent', color: tab==="search"?'white':'var(--text-muted)', boxShadow: tab==="search"?'var(--shadow-md)':'none', transition:'all .3s' }}>
-          Live Search
-        </button>
+          style={{ backgroundColor: tab==="search"?'var(--primary)':'transparent', color: tab==="search"?'white':'var(--text-muted)', boxShadow: tab==="search"?'var(--shadow-md)':'none', transition:'all .3s' }}>Live Search</button>
       </div>
       <div ref={contentRef} className="mt-8 bg-[var(--card)] border border-[var(--border)] rounded-2xl p-8 text-center">
         {tab==="filter" ? (
@@ -214,8 +189,7 @@ function DemoTabs() {
               {FILTER_CATEGORIES.map((c,i)=>(<span key={i} className="px-3 py-1.5 rounded-full text-xs font-medium" style={{backgroundColor:`${c.color}20`,color:c.color,border:`1px solid ${c.color}40`}}>{c.icon} {c.label}</span>))}
             </div>
             <p className="text-sm font-medium mb-4">Filtering {CATEGORY_PRODUCTS["T-Shirts"].length} products in real-time</p>
-            <a href="https://woo-advanced-filter.beplusthemes.com/shop/" target="_blank" rel="noopener"
-              className="inline-flex items-center gap-2 text-white px-6 py-3 rounded-xl font-semibold shadow-lg" style={{background:GRAD}}>
+            <a href={DEMO_URL} target="_blank" rel="noopener" className="inline-flex items-center gap-2 text-white px-6 py-3 rounded-xl font-semibold shadow-lg" style={{background:GRAD}}>
               See Full Demo <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
             </a>
           </div>
@@ -234,8 +208,7 @@ function DemoTabs() {
                 </div>
               ))}
             </div>
-            <a href="https://woo-advanced-filter.beplusthemes.com/shop/" target="_blank" rel="noopener"
-              className="inline-flex items-center gap-2 text-white px-6 py-3 rounded-xl font-semibold shadow-lg mt-6" style={{background:GRAD}}>
+            <a href={DEMO_URL} target="_blank" rel="noopener" className="inline-flex items-center gap-2 text-white px-6 py-3 rounded-xl font-semibold shadow-lg mt-6" style={{background:GRAD}}>
               See Full Demo <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
             </a>
           </div>
@@ -245,8 +218,7 @@ function DemoTabs() {
   );
 }
 
-// ─── FAQ ───
-function FaqItem({ q, a }: { q: string; a: string }) {
+function FaqItem({ q, a }: { q: string; a: React.ReactNode }) {
   const [open, setOpen] = useState(false);
   const bodyRef = useRef<HTMLDivElement>(null);
   const mountRef = useRef(false);
@@ -264,40 +236,46 @@ function FaqItem({ q, a }: { q: string; a: string }) {
         <span className="text-lg text-[var(--text-muted)]" style={{transform:open?'rotate(45deg)':'rotate(0deg)',transition:'transform .3s'}}>+</span>
       </button>
       <div ref={bodyRef} className="overflow-hidden" style={{height:open?'auto':0,opacity:open?1:0}}>
-        <p className="pb-4 text-xs text-[var(--text-muted)] leading-relaxed">{a}</p>
+        <div className="pb-4 text-xs text-[var(--text-muted)] leading-relaxed">{a}</div>
       </div>
     </div>
   );
 }
 
-// ─── MAIN ───
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [dark, setDark] = useState(true);
   const headerRef = useRef<HTMLElement>(null);
-  useEffect(() => { if(headerRef.current) gsap.fromTo(headerRef.current,{y:-80,opacity:0},{y:0,opacity:1,duration:.7,ease:"power3.out"}); }, []);
+
+  useEffect(() => {
+    if(headerRef.current) gsap.fromTo(headerRef.current,{y:-80,opacity:0},{y:0,opacity:1,duration:.7,ease:"power3.out"});
+    // Listen for theme changes
+    const observer = new MutationObserver(() => {
+      setDark(document.documentElement.classList.contains('dark'));
+    });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    return () => observer.disconnect();
+  }, []);
+
   const scrollTo = (id:string) => {
     setMenuOpen(false);
     const el = document.getElementById(id);
-    if (el) {
-      const top = el.getBoundingClientRect().top + window.scrollY - 80;
-      window.scrollTo({ top, behavior: "smooth" });
-    }
+    if (el) { const top = el.getBoundingClientRect().top + window.scrollY - 80; window.scrollTo({ top, behavior: "smooth" }); }
   };
   const NAV = [{id:"features",label:"Features"},{id:"how",label:"How It Works"},{id:"demo",label:"Demo"},{id:"pricing",label:"Pricing"},{id:"faq",label:"FAQ"}];
+  const logoUrl = dark ? LOGO_DARK : LOGO_LIGHT;
 
   return (
     <main className="overflow-x-hidden">
       {/* HEADER */}
       <header ref={headerRef} className="fixed top-0 left-0 right-0 z-50 border-b border-[var(--border)]" style={{background:"var(--header-bg)",backdropFilter:"blur(16px)"}}>
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <a href="#" className="flex items-center gap-2">
-            <span className="w-8 h-8 rounded-lg flex items-center justify-center text-white font-extrabold text-sm" style={{background:GRAD}}>B</span>
-            <span className="font-extrabold text-xl" style={{background:GRAD,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",backgroundClip:"text"}}>Beplus</span>
+        <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
+          <a href="#" className="flex items-center gap-3">
+            <img src={logoUrl} alt="Beplus" className="h-10 w-auto" />
           </a>
           <nav className="hidden md:flex items-center gap-6">
             {NAV.map(n=>(<button key={n.id} onClick={()=>scrollTo(n.id)} className="text-sm font-medium text-[var(--text-muted)] hover:text-[var(--text)]" style={{transition:"color .2s"}}>{n.label}</button>))}
-            <a href="https://wordpress.org/plugins/beplus-fast-product-filter-live-search-for-woocommerce/" target="_blank" rel="noopener"
-              className="text-white px-5 py-2.5 rounded-lg font-semibold text-sm shadow-md" style={{background:GRAD}}>Download Free</a>
+            <a href={PLUGIN_URL} target="_blank" rel="noopener" className="text-white px-5 py-2.5 rounded-lg font-semibold text-sm shadow-md" style={{background:GRAD}}>Download Free</a>
           </nav>
           <button className="md:hidden p-1" onClick={()=>setMenuOpen(!menuOpen)}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
@@ -328,8 +306,8 @@ export default function Home() {
                 Two native Gutenberg blocks. Zero page refreshes. AJAX-powered results that keep your customers shopping — not waiting.
               </p>
               <div className="flex flex-wrap gap-4 mb-8">
-                <GradBtn href="https://woo-advanced-filter.beplusthemes.com/shop/">Try Live Demo <ArrowRight/></GradBtn>
-                <a href="https://wordpress.org/plugins/beplus-fast-product-filter-live-search-for-woocommerce/" target="_blank" rel="noopener"
+                <GradBtn href={DEMO_URL}>Try Live Demo <ArrowRight/></GradBtn>
+                <a href={PLUGIN_URL} target="_blank" rel="noopener"
                   className="inline-flex items-center gap-2 border-2 border-[var(--border)] px-6 py-3.5 rounded-xl font-semibold text-[var(--text)] hover:border-[var(--primary)]" style={{transition:"border-color .2s,color .2s"}}>
                   <DownloadIcon/> Download Free
                 </a>
@@ -347,7 +325,7 @@ export default function Home() {
 
       {/* PAIN POINTS */}
       <section className="py-16 px-6"><div className="max-w-7xl mx-auto">
-        <div className="text-center mb-14"><SectionBadge text="The Problem"/><h2 className="text-3xl md:text-4xl font-extrabold mt-4 mb-4">Your Customers Deserve Better</h2><p className="text-[var(--text-muted)] max-w-lg mx-auto text-sm">Default WooCommerce search is slow and clunky. Here's what's costing you sales.</p></div>
+        <div className="text-center mb-14"><SectionBadge text="The Problem"/><h2 className="text-3xl md:text-4xl font-extrabold mt-4 mb-4">Your Customers Deserve Better</h2><p className="text-[var(--text-muted)] max-w-lg mx-auto text-sm">Default WooCommerce search is slow and clunky. Here&apos;s what&apos;s costing you sales.</p></div>
         <div className="grid md:grid-cols-3 gap-6">
           {[{emoji:"⏳",title:"Slow Product Browsing",text:"Default page reloads take 2-4 seconds. Beplus delivers results in under 200ms via AJAX — no full page refresh."},{emoji:"🔍",title:"Poor Search Experience",text:"Default search shows no thumbnails or prices. Beplus Live Search displays everything with typo correction."},{emoji:"💸",title:"Lost Revenue",text:"53% of shoppers abandon the store when search is slow. Instant results keep customers engaged and buying."}].map((p,i)=>(
             <AnimateSection key={i} delay={i*.1} className="group bg-[var(--card)] border border-[var(--border)] rounded-2xl p-7"><div className="text-3xl mb-4">{p.emoji}</div><h3 className="font-bold mb-2 text-sm">{p.title}</h3><p className="text-[var(--text-muted)] text-xs leading-relaxed">{p.text}</p></AnimateSection>
@@ -402,7 +380,7 @@ export default function Home() {
         <div className="text-center mb-14"><SectionBadge text="Testimonials"/><h2 className="text-3xl md:text-4xl font-extrabold mt-4">Loved by Store Owners</h2></div>
         <div className="grid md:grid-cols-3 gap-6">
           {[{q:"Finally a product filter that actually works with block themes. No more wrestling with shortcodes and page builders.",a:"Sarah L., Store Owner"},{q:"The live search with product thumbnails and add-to-cart boosted my mobile conversions by 18% in the first week.",a:"James K., WooCommerce Developer"},{q:"AJAX filtering is so smooth, my page speed actually improved after switching. Great developer experience.",a:"Maria T., Agency Owner"}].map((t,i)=>(
-            <AnimateSection key={i} delay={i*.1} className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-7"><div className="text-4xl text-[var(--accent)] mb-3 leading-none font-serif">"</div><p className="text-sm text-[var(--text)] mb-5 leading-relaxed">{t.q}</p><div className="text-xs text-[var(--text-muted)] font-semibold">{t.a}</div></AnimateSection>
+            <AnimateSection key={i} delay={i*.1} className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-7"><div className="text-4xl text-[var(--accent)] mb-3 leading-none font-serif">&ldquo;</div><p className="text-sm text-[var(--text)] mb-5 leading-relaxed">{t.q}</p><div className="text-xs text-[var(--text-muted)] font-semibold">{t.a}</div></AnimateSection>
           ))}
         </div>
       </div></section>
@@ -415,8 +393,7 @@ export default function Home() {
             <h3 className="text-lg font-bold mb-2">Free Core</h3>
             <div className="text-4xl font-extrabold mb-6">$0 <span className="text-sm font-normal text-[var(--text-muted)]">/ forever</span></div>
             <ul className="space-y-3 mb-8">{["2 Gutenberg blocks","8+ filter types","AJAX live search","Typo tolerance","ARIA accessibility","i18n ready"].map(l=>(<li key={l} className="flex items-center gap-2 text-xs"><span className="text-[var(--accent)]">✓</span> {l}</li>))}</ul>
-            <a href="https://wordpress.org/plugins/beplus-fast-product-filter-live-search-for-woocommerce/" target="_blank" rel="noopener"
-              className="block text-center text-white py-3 rounded-xl font-semibold text-sm shadow-md" style={{background:GRAD}}>Download Free</a>
+            <a href={PLUGIN_URL} target="_blank" rel="noopener" className="block text-center text-white py-3 rounded-xl font-semibold text-sm shadow-md" style={{background:GRAD}}>Download Free</a>
           </div>
           <div className="bg-[var(--card)] border-2 border-[var(--primary)]/30 rounded-2xl p-8 text-left relative">
             <span className="absolute -top-3 right-6 bg-[var(--primary)] text-white text-[10px] font-semibold px-3 py-1 rounded-full">Coming Soon</span>
@@ -427,17 +404,43 @@ export default function Home() {
         </div>
       </div></section>
 
+      {/* ABOUT BEPLUS */}
+      <section className="py-16 px-6"><div className="max-w-3xl mx-auto text-center">
+        <SectionBadge text="About Beplus"/>
+        <h2 className="text-3xl md:text-4xl font-extrabold mt-4 mb-6">Built by Beplus</h2>
+        <p className="text-[var(--text-muted)] text-sm leading-relaxed mb-6">
+          This plugin is built and maintained by{" "}
+          <a href={BEPLUS_URL} target="_blank" rel="noopener" className="text-[var(--primary)] font-semibold hover:underline">Beplus</a>
+          , a WordPress &amp; Shopify development studio. If you need a premium theme, custom development, or ongoing site maintenance, visit{" "}
+          <a href={BEPLUS_URL} target="_blank" rel="noopener" className="text-[var(--primary)] font-semibold hover:underline">beplusthemes.com</a>.
+        </p>
+        <a href={BEPLUS_URL} target="_blank" rel="noopener"
+          className="inline-flex items-center gap-2 text-white px-6 py-3 rounded-xl font-semibold shadow-lg" style={{background:GRAD}}>
+          Visit Beplus <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+        </a>
+      </div></section>
+
       {/* FAQ */}
       <section id="faq" className="py-16 px-6"><div className="max-w-2xl mx-auto">
         <div className="text-center mb-12"><SectionBadge text="FAQ"/><h2 className="text-3xl md:text-4xl font-extrabold mt-4">Frequently Asked Questions</h2></div>
-        {[["Does this work with block themes?","Yes! Native Gutenberg blocks designed for block themes and FSE. Fully compatible with Twenty Twenty-Five and other modern WordPress themes."],["Can I use only one of the blocks?","Absolutely. Use the filter panel on your shop page, the live search in your header, or both. They work together or independently."],["Does it support custom taxonomies?","Yes! Expose any custom product taxonomy as a filter — Brand, Material, Season, or your own custom taxonomies."],["Will this slow down my store?","No — it often improves perceived speed. Pre-built cache with auto-refresh keeps AJAX responses under 200ms."],["Can I customize the look and feel?","Yes. The blocks respect your theme styles and include block settings for accent colors, layout, and more. CSS hooks available."],["Does it work with page builders?","Built as native Gutenberg blocks. Works with any builder that supports WordPress blocks. Best experience with FSE block themes."],["Is WooCommerce required?","Yes. Both blocks require WooCommerce to be active with products. Filter and search data come from WooCommerce."],["Does it support variable products?","Yes. Variable and grouped products are fully supported with price ranges and proper filter handling."]].map(([q,a],i)=><FaqItem key={i} q={q} a={a}/>)}
+        <FaqItem q="Does this work with block themes?" a="Yes! Native Gutenberg blocks designed for block themes and FSE. Fully compatible with Twenty Twenty-Five and other modern WordPress themes." />
+        <FaqItem q="Can I use only one of the blocks?" a="Absolutely. Use the filter panel on your shop page, the live search in your header, or both. They work together or independently." />
+        <FaqItem q="Does it support custom taxonomies?" a="Yes! Expose any custom product taxonomy as a filter — Brand, Material, Season, or your own custom taxonomies." />
+        <FaqItem q="Will this slow down my store?" a="No — it often improves perceived speed. Pre-built cache with auto-refresh keeps AJAX responses under 200ms." />
+        <FaqItem q="Can I customize the look and feel?" a="Yes. The blocks respect your theme styles and include block settings for accent colors, layout, and more. CSS hooks available." />
+        <FaqItem q="Does it work with page builders?" a="Built as native Gutenberg blocks. Works with any builder that supports WordPress blocks. Best experience with FSE block themes." />
+        <FaqItem q="Is WooCommerce required?" a="Yes. Both blocks require WooCommerce to be active with products. Filter and search data come from WooCommerce." />
+        <FaqItem q="Does it support variable products?" a="Yes. Variable and grouped products are fully supported with price ranges and proper filter handling." />
+        <FaqItem q="Where can I get premium WordPress/Shopify themes from Beplus?"
+          a={<span>Visit <a href={TEMPLATES_URL} target="_blank" rel="noopener" className="text-[var(--primary)] font-semibold hover:underline">beplusthemes.com/our-templates/</a> to browse our theme collection, or contact us for custom development and outsourcing services.</span>}
+        />
       </div></section>
 
       {/* CTA */}
       <section className="py-16 px-6 bg-gradient-to-b from-[var(--bg)] to-[var(--bg-alt)] text-center"><div className="max-w-2xl mx-auto">
         <h2 className="text-3xl md:text-4xl font-extrabold mb-4">Give Your Customers the Search Experience They Deserve</h2>
         <p className="text-[var(--text-muted)] text-sm mb-8">Free, open-source, and takes 3 minutes to set up.</p>
-        <a href="https://wordpress.org/plugins/beplus-fast-product-filter-live-search-for-woocommerce/" target="_blank" rel="noopener"
+        <a href={PLUGIN_URL} target="_blank" rel="noopener"
           className="inline-flex items-center gap-2 text-white px-8 py-4 rounded-xl font-semibold text-base shadow-xl" style={{background:GRAD}}>
           <DownloadIcon/> Download on WordPress.org
         </a>
@@ -446,8 +449,10 @@ export default function Home() {
 
       {/* FOOTER */}
       <footer className="border-t border-[var(--border)] py-8 px-6"><div className="max-w-7xl mx-auto flex justify-between items-center flex-wrap gap-4 text-xs text-[var(--text-muted)]">
-        <span className="flex items-center gap-2 font-extrabold text-sm" style={{background:GRAD,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",backgroundClip:"text"}}>⚡ Beplus</span>
-        <span>© 2026 Beplus · <a href="https://wordpress.org/plugins/beplus-fast-product-filter-live-search-for-woocommerce/" target="_blank" rel="noopener" className="text-[var(--primary)] hover:underline">Plugin on WordPress.org</a></span>
+        <a href={BEPLUS_URL} target="_blank" rel="noopener">
+          <img src={logoUrl} alt="Beplus" className="h-7 w-auto opacity-70 hover:opacity-100 transition-opacity" />
+        </a>
+        <span>© 2026 Beplus · <a href={PLUGIN_URL} target="_blank" rel="noopener" className="text-[var(--primary)] hover:underline">Plugin on WordPress.org</a></span>
       </div></footer>
     </main>
   );
