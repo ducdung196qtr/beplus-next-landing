@@ -440,7 +440,7 @@ export default function Home() {
       </section>
 
       {/* ───── PAIN POINTS ───── */}
-      <section className="py-24 px-6"><div className="max-w-7xl mx-auto">
+      <section className="py-16 px-6"><div className="max-w-7xl mx-auto">
         <div className="text-center mb-14">
           <SectionBadge text="The Problem" />
           <h2 className="text-3xl md:text-4xl font-extrabold mt-4 mb-4">Your Customers Deserve Better</h2>
@@ -462,7 +462,7 @@ export default function Home() {
       </div></section>
 
       {/* ───── FEATURES ───── */}
-      <section id="features" className="py-24 px-6 bg-[--bg-alt]"><div className="max-w-7xl mx-auto">
+      <section id="features" className="py-16 px-6 bg-[--bg-alt]"><div className="max-w-7xl mx-auto">
         <div className="text-center mb-14">
           <SectionBadge text="Features" />
           <h2 className="text-3xl md:text-4xl font-extrabold mt-4">Supercharge Product Discovery</h2>
@@ -486,7 +486,7 @@ export default function Home() {
       </div></section>
 
       {/* ───── HOW IT WORKS (redesigned) ───── */}
-      <section id="how" className="py-24 px-6"><div className="max-w-7xl mx-auto">
+      <section id="how" className="py-16 px-6"><div className="max-w-7xl mx-auto">
         <div className="text-center mb-14">
           <SectionBadge text="How It Works" />
           <h2 className="text-3xl md:text-4xl font-extrabold mt-4">Three Steps to a Faster Store</h2>
@@ -514,7 +514,7 @@ export default function Home() {
       </div></section>
 
       {/* ───── DEMO ───── */}
-      <section id="demo" className="py-24 px-6 bg-[--bg-alt]"><div className="max-w-7xl mx-auto text-center">
+      <section id="demo" className="py-16 px-6 bg-[--bg-alt]"><div className="max-w-7xl mx-auto text-center">
         <SectionBadge text="Live Demos" />
         <h2 className="text-3xl md:text-4xl font-extrabold mt-4 mb-12">See It in Action</h2>
         <DemoTabs />
@@ -538,7 +538,7 @@ export default function Home() {
       </div></section>
 
       {/* ───── TESTIMONIALS ───── */}
-      <section className="py-24 px-6"><div className="max-w-7xl mx-auto">
+      <section className="py-16 px-6"><div className="max-w-7xl mx-auto">
         <div className="text-center mb-14">
           <SectionBadge text="Testimonials" />
           <h2 className="text-3xl md:text-4xl font-extrabold mt-4">Loved by Store Owners</h2>
@@ -559,7 +559,7 @@ export default function Home() {
       </div></section>
 
       {/* ───── PRICING ───── */}
-      <section id="pricing" className="py-24 px-6 bg-[--bg-alt]"><div className="max-w-7xl mx-auto text-center">
+      <section id="pricing" className="py-16 px-6 bg-[--bg-alt]"><div className="max-w-7xl mx-auto text-center">
         <SectionBadge text="Pricing" />
         <h2 className="text-3xl md:text-4xl font-extrabold mt-4 mb-12">Simple, Transparent Pricing</h2>
         <div className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto">
@@ -596,7 +596,7 @@ export default function Home() {
       </div></section>
 
       {/* ───── FAQ ───── */}
-      <section id="faq" className="py-24 px-6"><div className="max-w-2xl mx-auto">
+      <section id="faq" className="py-16 px-6"><div className="max-w-2xl mx-auto">
         <div className="text-center mb-12">
           <SectionBadge text="FAQ" />
           <h2 className="text-3xl md:text-4xl font-extrabold mt-4">Frequently Asked Questions</h2>
@@ -616,7 +616,7 @@ export default function Home() {
       </div></section>
 
       {/* ───── CTA ───── */}
-      <section className="py-24 px-6 bg-gradient-to-b from-[--bg] to-[--bg-alt] text-center"><div className="max-w-2xl mx-auto">
+      <section className="py-16 px-6 bg-gradient-to-b from-[--bg] to-[--bg-alt] text-center"><div className="max-w-2xl mx-auto">
         <h2 className="text-3xl md:text-4xl font-extrabold mb-4">Give Your Customers the Search Experience They Deserve</h2>
         <p className="text-[--text-muted] text-sm mb-8">Free, open-source, and takes 3 minutes to set up.</p>
         <a href="https://wordpress.org/plugins/beplus-fast-product-filter-live-search-for-woocommerce/" target="_blank"
