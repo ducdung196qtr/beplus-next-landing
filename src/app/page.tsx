@@ -64,7 +64,8 @@ const CATEGORY_PRODUCTS: Record<string, { emoji: string; name: string; price: st
 const PRICE_RANGES = ["All Prices", "$0-$25", "$25-$50", "$50-$100", "$100+"];
 
 const PLUGIN_URL = "https://wordpress.org/plugins/beplus-fast-product-filter-live-search-for-woocommerce/";
-const DEMO_URL = "https://beplus-fast-product-filter.vercel.app";
+const DEMO_FILTER_URL = "https://woo-advanced-filter.beplusthemes.com/shop/";
+const DEMO_SEARCH_URL = "https://woo-advanced-filter.beplusthemes.com/demo-live-search/";
 const BEPLUS_URL = "https://beplusthemes.com";
 const TEMPLATES_URL = "https://beplusthemes.com/our-templates/";
 
@@ -189,7 +190,7 @@ function DemoTabs() {
               {FILTER_CATEGORIES.map((c,i)=>(<span key={i} className="px-3 py-1.5 rounded-full text-xs font-medium" style={{backgroundColor:`${c.color}20`,color:c.color,border:`1px solid ${c.color}40`}}>{c.icon} {c.label}</span>))}
             </div>
             <p className="text-sm font-medium mb-4">Filtering {CATEGORY_PRODUCTS["T-Shirts"].length} products in real-time</p>
-            <a href={DEMO_URL} target="_blank" rel="noopener" className="inline-flex items-center gap-2 text-white px-6 py-3 rounded-xl font-semibold shadow-lg" style={{background:GRAD}}>
+            <a href={DEMO_FILTER_URL} target="_blank" rel="noopener" className="inline-flex items-center gap-2 text-white px-6 py-3 rounded-xl font-semibold shadow-lg" style={{background:GRAD}}>
               See Full Demo <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
             </a>
           </div>
@@ -208,7 +209,7 @@ function DemoTabs() {
                 </div>
               ))}
             </div>
-            <a href={DEMO_URL} target="_blank" rel="noopener" className="inline-flex items-center gap-2 text-white px-6 py-3 rounded-xl font-semibold shadow-lg mt-6" style={{background:GRAD}}>
+            <a href={DEMO_SEARCH_URL} target="_blank" rel="noopener" className="inline-flex items-center gap-2 text-white px-6 py-3 rounded-xl font-semibold shadow-lg mt-6" style={{background:GRAD}}>
               See Full Demo <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
             </a>
           </div>
@@ -306,7 +307,7 @@ export default function Home() {
                 Two native Gutenberg blocks. Zero page refreshes. AJAX-powered results that keep your customers shopping — not waiting.
               </p>
               <div className="flex flex-wrap gap-4 mb-8">
-                <GradBtn href={DEMO_URL}>Try Live Demo <ArrowRight/></GradBtn>
+                <GradBtn href={DEMO_FILTER_URL}>Try Live Demo <ArrowRight/></GradBtn>
                 <a href={PLUGIN_URL} target="_blank" rel="noopener"
                   className="inline-flex items-center gap-2 border-2 border-[var(--border)] px-6 py-3.5 rounded-xl font-semibold text-[var(--text)] hover:border-[var(--primary)]" style={{transition:"border-color .2s,color .2s"}}>
                   <DownloadIcon/> Download Free
