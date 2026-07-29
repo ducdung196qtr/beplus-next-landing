@@ -6,234 +6,522 @@ import "./globals.css";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const FILTER_PILLS = ["All", "Clothing", "Accessories", "Shoes", "$10-$50"];
-const PRODUCTS = [
-  { emoji: "👕", name: "Cotton T-Shirt", price: "$29.99" },
-  { emoji: "👖", name: "Slim Jeans", price: "$59.99" },
-  { emoji: "🧥", name: "Winter Jacket", price: "$129.99" },
-  { emoji: "👟", name: "Running Shoes", price: "$89.99" },
-  { emoji: "👜", name: "Leather Bag", price: "$79.99" },
-  { emoji: "🧢", name: "Baseball Cap", price: "$19.99" },
+// ─── Mockup data ───
+const FILTER_CATEGORIES = [
+  { label: "T-Shirts", icon: "👕", color: "#FF6B6B" },
+  { label: "Jeans", icon: "👖", color: "#4ECDC4" },
+  { label: "Shoes", icon: "👟", color: "#45B7D1" },
+  { label: "Bags", icon: "👜", color: "#F7DC6F" },
+  { label: "Hats", icon: "🧢", color: "#BB8FCE" },
 ];
 
-function SectionLabel({ text }: { text: string }) {
-  return <span className="inline-block text-[13px] font-semibold text-[#2271B1] uppercase tracking-wider mb-3">{text}</span>;
-}
+const CATEGORY_PRODUCTS: Record<string, { emoji: string; name: string; price: string; stars: number }[]> = {
+  "T-Shirts": [
+    { emoji: "👕", name: "Cotton T-Shirt", price: "$29.99", stars: 5 },
+    { emoji: "👔", name: "Polo Classic", price: "$49.99", stars: 4 },
+    { emoji: "🎽", name: "Tank Top", price: "$19.99", stars: 5 },
+    { emoji: "🧵", name: "Henley Shirt", price: "$39.99", stars: 4 },
+    { emoji: "👚", name: "V-Neck Tee", price: "$24.99", stars: 5 },
+    { emoji: "🦺", name: "Graphic Tee", price: "$34.99", stars: 3 },
+  ],
+  "Jeans": [
+    { emoji: "👖", name: "Slim Fit Jeans", price: "$79.99", stars: 5 },
+    { emoji: "👖", name: "Straight Leg", price: "$69.99", stars: 4 },
+    { emoji: "👖", name: "Skinny Jeans", price: "$59.99", stars: 4 },
+    { emoji: "👖", name: "Bootcut Jean", price: "$89.99", stars: 5 },
+    { emoji: "👖", name: "Relaxed Fit", price: "$74.99", stars: 3 },
+    { emoji: "👖", name: "Distressed", price: "$99.99", stars: 5 },
+  ],
+  "Shoes": [
+    { emoji: "👟", name: "Running Shoes", price: "$129.99", stars: 5 },
+    { emoji: "👠", name: "Classic Heels", price: "$89.99", stars: 4 },
+    { emoji: "👞", name: "Loafers", price: "$109.99", stars: 4 },
+    { emoji: "🥾", name: "Hiking Boots", price: "$149.99", stars: 5 },
+    { emoji: "👡", name: "Sandals", price: "$49.99", stars: 3 },
+    { emoji: "🏀", name: "Basketball", price: "$159.99", stars: 5 },
+  ],
+  "Bags": [
+    { emoji: "👜", name: "Leather Tote", price: "$149.99", stars: 5 },
+    { emoji: "🎒", name: "Urban Backpack", price: "$89.99", stars: 4 },
+    { emoji: "💼", name: "Briefcase", price: "$199.99", stars: 5 },
+    { emoji: "🛍️", name: "Shoulder Bag", price: "$69.99", stars: 4 },
+    { emoji: "👝", name: "Clutch Purse", price: "$39.99", stars: 3 },
+    { emoji: "🧳", name: "Travel Duffel", price: "$119.99", stars: 5 },
+  ],
+  "Hats": [
+    { emoji: "🧢", name: "Baseball Cap", price: "$24.99", stars: 5 },
+    { emoji: "🎩", name: "Fedora Hat", price: "$49.99", stars: 4 },
+    { emoji: "👒", name: "Sun Hat", price: "$34.99", stars: 4 },
+    { emoji: "⛑️", name: "Bucket Hat", price: "$29.99", stars: 3 },
+    { emoji: "🎓", name: "Beanie", price: "$19.99", stars: 5 },
+    { emoji: "🪖", name: "Visor Cap", price: "$22.99", stars: 4 },
+  ],
+};
 
-function SectionTitle({ children }: { children: React.ReactNode }) {
-  return <h2 className="text-3xl md:text-4xl font-extrabold text-[#1E1E1E] mb-4">{children}</h2>;
-}
+const PRICE_RANGES = ["All Prices", "$0-$25", "$25-$50", "$50-$100", "$100+"];
 
-function AnimateIn({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+// ─── Section animations ───
+function AnimateSection({ children, className = "", delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    if (ref.current) {
-      gsap.fromTo(ref.current, { y: 40, opacity: 0 }, {
-        y: 0, opacity: 1, duration: 0.8, ease: "power3.out",
-        scrollTrigger: { trigger: ref.current, start: "top 85%" }
-      });
-    }
+    const el = ref.current;
+    if (!el) return;
+    gsap.fromTo(el, { y: 50, opacity: 0 }, {
+      y: 0, opacity: 1, duration: 0.7, delay,
+      ease: "power3.out",
+      scrollTrigger: { trigger: el, start: "top 88%" },
+    });
   }, []);
   return <div ref={ref} className={className}>{children}</div>;
 }
 
+// ─── Badge ───
+function SectionBadge({ text }: { text: string }) {
+  return (
+    <span className="text-xs font-bold tracking-[0.2em] uppercase px-3 py-1 rounded-full border border-[--accent]/30 text-[--accent] bg-[--accent]/5">
+      {text}
+    </span>
+  );
+}
+
+// ─── Star rating ───
+function Stars({ n }: { n: number }) {
+  return <span className="text-yellow-500 text-[10px] tracking-tight">{Array.from({ length: n }, () => "★").join("")}{Array.from({ length: 5 - n }, () => "☆").join("")}</span>;
+}
+
+// ─── Interactive Mockup ───
 function HeroMockup() {
   const [activeFilter, setActiveFilter] = useState(0);
-  const ref = useRef<HTMLDivElement>(null);
+  const [selPrice, setSelPrice] = useState(0);
+  const [searchTerm, setSearchTerm] = useState("");
+  const mockupRef = useRef<HTMLDivElement>(null);
+
+  const cat = FILTER_CATEGORIES[activeFilter];
+  const products = CATEGORY_PRODUCTS[cat.label] || [];
+  const filtered = searchTerm
+    ? products.filter(p => p.name.toLowerCase().includes(searchTerm.toLowerCase()))
+    : selPrice > 0
+      ? products.filter(p => {
+          const price = parseFloat(p.price.replace("$", ""));
+          const ranges = [[0, 25], [25, 50], [50, 100], [100, 999]];
+          const [lo, hi] = ranges[selPrice - 1];
+          return price >= lo && price < hi;
+        })
+      : products;
 
   useEffect(() => {
-    if (ref.current) {
-      gsap.fromTo(ref.current, { x: 80, opacity: 0 }, { x: 0, opacity: 1, duration: 1, ease: "power4.out", delay: 0.3 });
-    }
-    const interval = setInterval(() => setActiveFilter(p => (p + 1) % FILTER_PILLS.length), 2000);
-    return () => clearInterval(interval);
+    if (!mockupRef.current) return;
+    gsap.fromTo(mockupRef.current, { x: 80, opacity: 0 }, { x: 0, opacity: 1, duration: 1, ease: "power4.out", delay: 0.4 });
   }, []);
 
+  useEffect(() => {
+    // animate category switch
+    const items = mockupRef.current?.querySelectorAll(".product-card");
+    if (items) {
+      gsap.fromTo(items, { scale: 0.85, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.35, stagger: 0.04, ease: "back.out(1.2)" });
+    }
+  }, [activeFilter, selPrice, searchTerm]);
+
   return (
-    <div ref={ref} className="bg-white rounded-2xl shadow-2xl overflow-hidden border border-[#E5E7EB]">
-      <div className="bg-[#F0F4FF] px-4 py-3 flex gap-1.5">
+    <div ref={mockupRef} className="bg-[--card] rounded-2xl shadow-2xl overflow-hidden border border-[--border] w-full max-w-[520px]">
+      {/* Window chrome */}
+      <div className="bg-[--bg-alt] px-4 py-3 flex gap-1.5 border-b border-[--border]">
         <span className="w-2.5 h-2.5 rounded-full bg-[#FF5F57]"/>
         <span className="w-2.5 h-2.5 rounded-full bg-[#FFBD2E]"/>
         <span className="w-2.5 h-2.5 rounded-full bg-[#27CA40]"/>
+        <span className="ml-2 text-[10px] text-[--text-muted] truncate">Shop — beplusthemes.com</span>
       </div>
       <div className="p-5">
-        <div className="flex gap-2 flex-wrap mb-4">
-          {FILTER_PILLS.map((p, i) => (
-            <span key={i} className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-300 ${i === activeFilter ? "bg-[#2271B1] text-white shadow-md" : "bg-[#F8F9FA] text-[#6B7280] border border-[#E5E7EB]"}`}>{p}</span>
+        {/* Search Bar */}
+        <div className="relative mb-4">
+          <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[--text-muted]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input
+            type="text"
+            placeholder="Search products..."
+            value={searchTerm}
+            onChange={e => setSearchTerm(e.target.value)}
+            className="w-full pl-10 pr-4 py-2 text-xs rounded-lg border border-[--border] bg-[--bg] placeholder:text-[--text-muted]/50 focus:outline-none focus:border-[--primary] transition-colors"
+          />
+        </div>
+
+        {/* Category Pills */}
+        <div className="flex gap-1.5 flex-wrap mb-4">
+          {FILTER_CATEGORIES.map((c, i) => (
+            <button
+              key={i}
+              onClick={() => { setActiveFilter(i); setSelPrice(0); setSearchTerm(""); }}
+              className="relative px-3 py-1.5 rounded-full text-[11px] font-semibold tracking-wide transition-all duration-500 whitespace-nowrap"
+              style={{
+                backgroundColor: activeFilter === i ? c.color : 'var(--bg-alt)',
+                color: activeFilter === i ? 'white' : 'var(--text-muted)',
+                boxShadow: activeFilter === i ? `0 2px 12px ${c.color}40` : 'none',
+                transform: activeFilter === i ? 'scale(1.05)' : 'scale(1)',
+              }}
+            >
+              <span className="mr-1">{c.icon}</span>{c.label}
+            </button>
           ))}
         </div>
-        <div className="grid grid-cols-3 gap-3">
-          {PRODUCTS.map((p, i) => (
-            <div key={i} className="bg-[#F8F9FA] border border-[#E5E7EB] rounded-lg p-3 text-center">
-              <div className="h-16 bg-gradient-to-br from-[#E8EFFF] to-[#F5EEFF] rounded-md flex items-center justify-center text-2xl mb-2">{p.emoji}</div>
-              <div className="text-[11px] font-semibold text-[#1E1E1E]">{p.name}</div>
-              <div className="text-[11px] font-semibold text-[#2271B1]">{p.price}</div>
+
+        {/* Price Range */}
+        <div className="flex gap-1.5 mb-4">
+          {PRICE_RANGES.map((r, i) => (
+            <button
+              key={i}
+              onClick={() => { setSelPrice(i); setSearchTerm(""); }}
+              className="text-[10px] font-medium px-2 py-1 rounded-md transition-all duration-300"
+              style={{
+                backgroundColor: selPrice === i ? 'var(--primary)' : 'var(--bg-alt)',
+                color: selPrice === i ? 'white' : 'var(--text-muted)',
+              }}
+            >{r}</button>
+          ))}
+        </div>
+
+        {/* Product Grid */}
+        <div className="grid grid-cols-3 gap-2.5 min-h-[200px]">
+          {filtered.map((p, i) => (
+            <div key={i} className="product-card bg-[--bg] border border-[--border] rounded-xl p-2.5 hover:shadow-lg transition-shadow duration-300 group cursor-pointer">
+              <div className="h-14 bg-gradient-to-br from-[--bg-alt] to-[--primary]/5 rounded-lg flex items-center justify-center text-2xl mb-2 group-hover:scale-110 transition-transform duration-300">
+                {p.emoji}
+              </div>
+              <div className="text-[10px] font-semibold truncate">{p.name}</div>
+              <Stars n={p.stars} />
+              <div className="text-[11px] font-bold text-[--primary] mt-0.5">{p.price}</div>
             </div>
           ))}
+          {filtered.length === 0 && (
+            <div className="col-span-3 text-center py-8 text-[--text-muted] text-xs">No products match</div>
+          )}
+        </div>
+
+        {/* AJAX badge */}
+        <div className="flex justify-center mt-4">
+          <span className="text-[10px] bg-[--accent]/10 text-[--accent] px-2 py-0.5 rounded-full font-medium">
+            ⚡ AJAX Response: {Math.floor(Math.random() * 50 + 80)}ms
+          </span>
         </div>
       </div>
     </div>
   );
 }
 
-export default function Home() {
-  const heroRef = useRef<HTMLDivElement>(null);
-  const statRefs = useRef<(HTMLDivElement | null)[]>([]);
+// ─── Tab demo section ───
+function DemoTabs() {
+  const [tab, setTab] = useState<"filter" | "search">("filter");
+  const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (heroRef.current) {
-      gsap.fromTo(heroRef.current.querySelectorAll('.hero-text'), 
-        { y: 40, opacity: 0 }, 
-        { y: 0, opacity: 1, duration: 0.8, stagger: 0.15, ease: "power3.out" }
-      );
+    if (contentRef.current) {
+      gsap.fromTo(contentRef.current, { y: 8, opacity: 0 }, { y: 0, opacity: 1, duration: 0.3, ease: "power2.out" });
     }
-    // Animate stat counters
-    statRefs.current.forEach((el, i) => {
-      if (!el) return;
-      gsap.fromTo(el, { textContent: "0" }, {
-        scrollTrigger: { trigger: el, start: "top 90%" },
-        duration: 2, ease: "power2.out",
-        snap: { textContent: 1 },
-        textContent: el.dataset.value || "0",
-      });
-    });
+  }, [tab]);
+
+  return (
+    <div className="max-w-xl mx-auto">
+      <div className="inline-flex gap-1 bg-[--bg-alt] p-1 rounded-full border border-[--border]">
+        <button
+          onClick={() => setTab("filter")}
+          className="px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300"
+          style={{
+            backgroundColor: tab === "filter" ? 'var(--primary)' : 'transparent',
+            color: tab === "filter" ? 'white' : 'var(--text-muted)',
+            boxShadow: tab === "filter" ? 'var(--shadow-md)' : 'none',
+          }}
+        >Product Filter (AJAX)</button>
+        <button
+          onClick={() => setTab("search")}
+          className="px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300"
+          style={{
+            backgroundColor: tab === "search" ? 'var(--primary)' : 'transparent',
+            color: tab === "search" ? 'white' : 'var(--text-muted)',
+            boxShadow: tab === "search" ? 'var(--shadow-md)' : 'none',
+          }}
+        >Live Search</button>
+      </div>
+      <div ref={contentRef} className="mt-8 bg-[--card] border border-[--border] rounded-2xl p-8 text-center">
+        {tab === "filter" ? (
+          <div>
+            <div className="flex gap-2 flex-wrap justify-center mb-6">
+              {FILTER_CATEGORIES.map((c, i) => (
+                <span key={i} className="px-3 py-1.5 rounded-full text-xs font-medium" style={{ backgroundColor: `${c.color}20`, color: c.color, border: `1px solid ${c.color}40` }}>
+                  {c.icon} {c.label}
+                </span>
+              ))}
+            </div>
+            <p className="text-sm font-medium mb-4">Filtering {CATEGORY_PRODUCTS["T-Shirts"].length} products in real-time</p>
+            <a href="https://woo-advanced-filter.beplusthemes.com/shop/" target="_blank"
+              className="inline-flex items-center gap-2 bg-[--gradient-btn] text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:opacity-90"
+              style={{ transition: 'opacity 200ms' }}>
+              See Full Demo <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+            </a>
+          </div>
+        ) : (
+          <div>
+            <div className="relative max-w-sm mx-auto mb-6">
+              <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[--text-muted]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+              <input placeholder="Search products..." readOnly className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-[--border] bg-[--bg] text-sm" />
+            </div>
+            <div className="space-y-2 max-w-sm mx-auto">
+              {CATEGORY_PRODUCTS["Shoes"].slice(0, 3).map((p, i) => (
+                <div key={i} className="flex items-center gap-3 bg-[--bg-alt] p-2 rounded-lg text-left">
+                  <span className="text-xl">{p.emoji}</span>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-xs font-semibold truncate">{p.name}</div>
+                    <div className="text-[10px] text-[--text-muted]">In stock</div>
+                  </div>
+                  <span className="text-xs font-bold text-[--primary] whitespace-nowrap">{p.price}</span>
+                </div>
+              ))}
+            </div>
+            <a href="https://woo-advanced-filter.beplusthemes.com/shop/" target="_blank"
+              className="inline-flex items-center gap-2 bg-[--gradient-btn] text-white px-6 py-3 rounded-xl font-semibold shadow-lg mt-6 hover:opacity-90"
+              style={{ transition: 'opacity 200ms' }}>
+              See Full Demo <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+            </a>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─── FAQ Component ───
+function FaqItem({ q, a }: { q: string; a: string }) {
+  const [open, setOpen] = useState(false);
+  const bodyRef = useRef<HTMLDivElement>(null);
+  const mountRef = useRef(false);
+
+  useEffect(() => {
+    if (!mountRef.current) { mountRef.current = true; return; }
+    if (bodyRef.current) {
+      if (open) {
+        gsap.fromTo(bodyRef.current, { height: 0, opacity: 0 }, { height: "auto", opacity: 1, duration: 0.3, ease: "power2.out" });
+      } else {
+        gsap.to(bodyRef.current, { height: 0, opacity: 0, duration: 0.25, ease: "power2.in" });
+      }
+    }
+  }, [open]);
+
+  return (
+    <div className="border-b border-[--border]">
+      <button onClick={() => setOpen(!open)} className="w-full py-5 flex justify-between items-center text-left font-semibold text-sm hover:text-[--primary]"
+        style={{ transition: 'color 200ms' }}>
+        {q}
+        <span className="text-lg text-[--text-muted]" style={{ transform: open ? 'rotate(45deg)' : 'rotate(0deg)', transition: 'transform 300ms' }}>
+          +
+        </span>
+      </button>
+      <div ref={bodyRef} className="overflow-hidden" style={{ height: open ? 'auto' : 0, opacity: open ? 1 : 0 }}>
+        <p className="pb-4 text-xs text-[--text-muted] leading-relaxed">{a}</p>
+      </div>
+    </div>
+  );
+}
+
+// ─── MAIN PAGE ───
+export default function Home() {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const headerRef = useRef<HTMLElement>(null);
+  const statRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  const scrollTo = (id: string) => {
+    setMenuOpen(false);
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
+  useEffect(() => {
+    if (headerRef.current) {
+      gsap.fromTo(headerRef.current, { y: -80, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7, ease: "power3.out" });
+    }
   }, []);
+
+  const NAV = [
+    { id: "features", label: "Features" },
+    { id: "how", label: "How It Works" },
+    { id: "demo", label: "Demo" },
+    { id: "pricing", label: "Pricing" },
+    { id: "faq", label: "FAQ" },
+  ];
 
   return (
     <main className="overflow-x-hidden">
+      {/* ───── HEADER ───── */}
+      <header ref={headerRef} className="fixed top-0 left-0 right-0 z-50 border-b border-[--border] bg-[--header-bg] backdrop-blur-xl">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+          <a href="#" className="flex items-center gap-2">
+            <span className="w-8 h-8 rounded-lg bg-[--gradient] flex items-center justify-center text-white font-extrabold text-sm">B</span>
+            <span className="font-extrabold text-xl bg-[--gradient] bg-clip-text text-transparent">Beplus</span>
+          </a>
+          <nav className="hidden md:flex items-center gap-6">
+            {NAV.map(n => (
+              <button key={n.id} onClick={() => scrollTo(n.id)} className="text-sm font-medium text-[--text-muted] hover:text-[--text]"
+                style={{ transition: 'color 200ms' }}>
+                {n.label}
+              </button>
+            ))}
+            <a href="https://wordpress.org/plugins/beplus-fast-product-filter-live-search-for-woocommerce/" target="_blank"
+              className="bg-[--gradient-btn] text-white px-5 py-2.5 rounded-lg font-semibold text-sm shadow-md"
+              style={{ transition: 'opacity 200ms' }}
+              onMouseEnter={e => (e.currentTarget.style.opacity = '0.9')}
+              onMouseLeave={e => (e.currentTarget.style.opacity = '1')}>
+              Download Free
+            </a>
+          </nav>
+          <button className="md:hidden p-1" onClick={() => setMenuOpen(!menuOpen)}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              {menuOpen ? <path d="M6 6L18 18M6 18L18 6"/> : <path d="M3 12h18M3 6h18M3 18h18"/>}
+            </svg>
+          </button>
+        </div>
+        {menuOpen && (
+          <nav className="md:hidden px-6 pb-6 space-y-3">
+            {NAV.map(n => (
+              <button key={n.id} onClick={() => scrollTo(n.id)} className="block text-sm font-medium py-2 w-full text-left text-[--text-muted]">
+                {n.label}
+              </button>
+            ))}
+          </nav>
+        )}
+      </header>
+
       {/* ───── HERO ───── */}
-      <section ref={heroRef} className="min-h-screen flex items-center bg-gradient-to-b from-[#F0F4FF] to-white relative overflow-hidden">
-        {/* Decorative gradient orbs */}
-        <div className="absolute top-20 -left-20 w-72 h-72 bg-[#7F54B3]/10 rounded-full blur-3xl"/>
-        <div className="absolute bottom-20 -right-20 w-96 h-96 bg-[#2271B1]/8 rounded-full blur-3xl"/>
+      <section className="min-h-screen flex items-center pt-20 pb-16 bg-[--bg] relative overflow-hidden">
+        {/* Gradient orbs */}
+        <div className="absolute top-20 -left-20 w-96 h-96 bg-[#7F54B3]/10 rounded-full blur-[100px]"/>
+        <div className="absolute bottom-20 -right-20 w-[30rem] h-[30rem] bg-[#2271B1]/8 rounded-full blur-[100px]"/>
         
-        <div className="max-w-7xl mx-auto px-8 py-32 grid lg:grid-cols-2 gap-12 items-center w-full">
-          <div>
-            <span className="hero-text block bg-white border border-[#E5E7EB] px-4 py-1.5 rounded-full text-sm font-medium mb-6 shadow-sm inline-flex items-center gap-2">
-              <span className="w-2 h-2 bg-[#46B450] rounded-full animate-pulse"/> Native Gutenberg Blocks — Just Released
-            </span>
-            <h1 className="hero-text text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-[1.1] mb-6">
-              Instant Product
-              <br/>
-              <span className="gradient-text">Filtering & Search</span>
-              <br/>
-              for WooCommerce
-            </h1>
-            <p className="hero-text text-lg text-[#6B7280] mb-8 max-w-lg leading-relaxed">
-              Two native Gutenberg blocks. Zero page refreshes. AJAX-powered results that keep your customers shopping — not waiting.
-            </p>
-            <div className="hero-text flex flex-wrap gap-4 mb-8">
-              <a href="https://woo-advanced-filter.beplusthemes.com/shop/" target="_blank" 
-                className="inline-flex items-center gap-2 bg-[linear-gradient(135deg,#2271B1,#7F54B3)] text-white px-7 py-3.5 rounded-xl font-semibold shadow-lg shadow-[#2271B1]/25 hover:-translate-y-0.5 hover:shadow-xl transition-all">
-                Try Live Demo
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-              </a>
-              <a href="https://wordpress.org/plugins/beplus-fast-product-filter-live-search-for-woocommerce/" target="_blank"
-                className="inline-flex items-center gap-2 border-2 border-[#E5E7EB] px-7 py-3.5 rounded-xl font-semibold hover:border-[#2271B1] hover:text-[#2271B1] transition-all">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
-                Download Free
-              </a>
+        <div className="max-w-7xl mx-auto px-6 w-full">
+          <div className="grid lg:grid-cols-2 gap-10 items-center">
+            <div>
+              <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-medium border border-[--border] bg-[--card] shadow-sm mb-6">
+                <span className="w-2 h-2 bg-[--accent] rounded-full animate-pulse"/> Native Gutenberg Blocks
+              </span>
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-[1.08] mb-6">
+                Instant Product
+                <br />
+                <span className="bg-[--gradient] bg-clip-text text-transparent">Filtering & Search</span>
+                <br />
+                for WooCommerce
+              </h1>
+              <p className="text-base sm:text-lg text-[--text-muted] mb-8 max-w-lg leading-relaxed">
+                Two native Gutenberg blocks. Zero page refreshes. AJAX-powered results that keep your customers shopping — not waiting.
+              </p>
+              <div className="flex flex-wrap gap-4 mb-8">
+                <a href="https://woo-advanced-filter.beplusthemes.com/shop/" target="_blank"
+                  className="inline-flex items-center gap-2 bg-[--gradient-btn] text-white px-6 py-3.5 rounded-xl font-semibold shadow-lg"
+                  style={{ transition: 'opacity 200ms' }}
+                  onMouseEnter={e => (e.currentTarget.style.opacity = '0.9')}
+                  onMouseLeave={e => (e.currentTarget.style.opacity = '1')}>
+                  Try Live Demo
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </a>
+                <a href="https://wordpress.org/plugins/beplus-fast-product-filter-live-search-for-woocommerce/" target="_blank"
+                  className="inline-flex items-center gap-2 border-2 border-[--border] px-6 py-3.5 rounded-xl font-semibold text-[--text] hover:border-[--primary]"
+                  style={{ transition: 'border-color 200ms, color 200ms' }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                  Download Free
+                </a>
+              </div>
+              <div className="flex gap-5 text-xs text-[--text-muted] flex-wrap">
+                <span className="flex items-center gap-1"><span className="text-[--accent]">✓</span> WordPress 6.5+</span>
+                <span className="flex items-center gap-1"><span className="text-[--accent]">✓</span> WooCommerce Ready</span>
+                <span className="flex items-center gap-1"><span className="text-[--accent]">✓</span> 100% Gutenberg Native</span>
+              </div>
             </div>
-            <div className="hero-text flex gap-6 text-sm text-[#6B7280] flex-wrap">
-              <span className="flex items-center gap-1.5"><span className="text-[#46B450]">✓</span> WordPress 6.5+</span>
-              <span className="flex items-center gap-1.5"><span className="text-[#46B450]">✓</span> WooCommerce Ready</span>
-              <span className="flex items-center gap-1.5"><span className="text-[#46B450]">✓</span> 100% Gutenberg Native</span>
+            <div className="hidden lg:flex justify-end">
+              <HeroMockup />
             </div>
-          </div>
-          <div className="hidden lg:block">
-            <HeroMockup />
           </div>
         </div>
       </section>
 
       {/* ───── PAIN POINTS ───── */}
-      <section className="section-padding"><div className="max-w-7xl mx-auto px-8">
+      <section className="py-24 px-6"><div className="max-w-7xl mx-auto">
         <div className="text-center mb-14">
-          <SectionLabel text="The Problem"/>
-          <SectionTitle>Your Customers Deserve Better</SectionTitle>
-          <p className="text-[#6B7280] text-lg max-w-lg mx-auto">Default WooCommerce browsing is slow. Here's what's costing you sales.</p>
+          <SectionBadge text="The Problem" />
+          <h2 className="text-3xl md:text-4xl font-extrabold mt-4 mb-4">Your Customers Deserve Better</h2>
+          <p className="text-[--text-muted] max-w-lg mx-auto text-sm">Default WooCommerce search is slow and clunky. Here's what's costing you sales.</p>
         </div>
         <div className="grid md:grid-cols-3 gap-6">
           {[
-            { icon: "🐌", title: "Slow Product Browsing", text: "Customers wait 2-4s for page reloads. Beplus delivers results in under 200ms via AJAX." },
-            { icon: "🔍", title: "Poor Search Experience", text: "Default search doesn't show thumbnails or prices. Beplus Live Search shows it all with typo correction." },
-            { icon: "💸", title: "Lost Sales", text: "53% of shoppers abandon if search is slow. Real-time results keep them engaged and buying." },
+            { emoji: "⏳", title: "Slow Product Browsing", text: "Default page reloads take 2-4 seconds. Beplus delivers results in under 200ms via AJAX — no full page refresh." },
+            { emoji: "🔍", title: "Poor Search Experience", text: "Default search shows no thumbnails or prices. Beplus Live Search displays everything with typo correction." },
+            { emoji: "💸", title: "Lost Revenue", text: "53% of shoppers abandon the store when search is slow. Instant results keep customers engaged and buying." },
           ].map((p, i) => (
-            <AnimateIn key={i} className="bg-white border border-[#E5E7EB] rounded-2xl p-7 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-              <div className="text-3xl mb-4">{p.icon}</div>
-              <h3 className="text-lg font-bold mb-2">{p.title}</h3>
-              <p className="text-[#6B7280] text-sm leading-relaxed">{p.text}</p>
-            </AnimateIn>
+            <AnimateSection key={i} delay={i * 0.1} className="group bg-[--card] border border-[--border] rounded-2xl p-7">
+              <div className="text-3xl mb-4">{p.emoji}</div>
+              <h3 className="font-bold mb-2 text-sm">{p.title}</h3>
+              <p className="text-[--text-muted] text-xs leading-relaxed">{p.text}</p>
+            </AnimateSection>
           ))}
         </div>
       </div></section>
 
       {/* ───── FEATURES ───── */}
-      <section id="features" className="section-padding bg-[#F8F9FA]"><div className="max-w-7xl mx-auto px-8">
+      <section id="features" className="py-24 px-6 bg-[--bg-alt]"><div className="max-w-7xl mx-auto">
         <div className="text-center mb-14">
-          <SectionLabel text="Features"/>
-          <SectionTitle>Supercharge Product Discovery</SectionTitle>
+          <SectionBadge text="Features" />
+          <h2 className="text-3xl md:text-4xl font-extrabold mt-4">Supercharge Product Discovery</h2>
         </div>
         <div className="grid md:grid-cols-3 gap-5">
           {[
-            { icon: "🔍", t: "Live Search Block", d: "Smart autocomplete with thumbnails, prices, add-to-cart. Typo-tolerant. Category filtering." },
-            { icon: "🏷️", t: "8+ Filter Types", d: "Keyword, category, tag, attributes, price range, stock, on-sale, featured, rating — all AJAX." },
-            { icon: "⚡", t: "Pre-built Cache", d: "Filter data pre-built & auto-refreshed. Large catalogs stay fast. <200ms responses." },
-            { icon: "🧩", t: "Native Gutenberg", d: "Full InspectorControls, ServerSideRender. Drop anywhere in Site Editor. No code needed." },
-            { icon: "🛡️", t: "Graceful Degradation", d: "Without JS, filters fall back to GET form. ARIA, keyboard nav, live regions built in." },
-            { icon: "🌍", t: "i18n & RTL Ready", d: "Fully internationalized. RTL support. Works with any WooCommerce-compatible block theme." },
+            { icon: "🔍", t: "Live Search Block", d: "Smart autocomplete with thumbnails, prices, and add-to-cart. Typo-tolerant with category filtering." },
+            { icon: "🏷️", t: "8+ Filter Types", d: "Keyword, category, tag, attributes, price range, stock, on-sale, featured, rating — all AJAX powered." },
+            { icon: "⚡", t: "Pre-built Cache", d: "Filter data pre-built and auto-refreshed. Large catalogs stay fast. <200ms response times." },
+            { icon: "🧩", t: "Native Gutenberg", d: "Full InspectorControls and ServerSideRender. Drop anywhere in the Site Editor. Zero code required." },
+            { icon: "🛡️", t: "Graceful Degradation", d: "Without JS, filters fall back to standard GET forms. ARIA, keyboard nav, and live regions built in." },
+            { icon: "🌍", t: "i18n & RTL Ready", d: "Fully internationalized with RTL support. Works seamlessly with any WooCommerce-compatible block theme." },
           ].map((f, i) => (
-            <AnimateIn key={i} className="bg-white border border-[#E5E7EB] rounded-2xl p-6 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+            <AnimateSection key={i} delay={i * 0.06} className="group bg-[--card] border border-[--border] rounded-2xl p-6">
               <div className="text-2xl mb-3">{f.icon}</div>
-              <h3 className="font-bold mb-2">{f.t}</h3>
-              <p className="text-[#6B7280] text-sm leading-relaxed">{f.d}</p>
-            </AnimateIn>
+              <h3 className="font-bold mb-2 text-sm">{f.t}</h3>
+              <p className="text-[--text-muted] text-xs leading-relaxed">{f.d}</p>
+            </AnimateSection>
           ))}
         </div>
       </div></section>
 
-      {/* ───── HOW IT WORKS ───── */}
-      <section id="how" className="section-padding"><div className="max-w-7xl mx-auto px-8">
+      {/* ───── HOW IT WORKS (redesigned) ───── */}
+      <section id="how" className="py-24 px-6"><div className="max-w-7xl mx-auto">
         <div className="text-center mb-14">
-          <SectionLabel text="How It Works"/>
-          <SectionTitle>Three Steps to a Faster Store</SectionTitle>
+          <SectionBadge text="How It Works" />
+          <h2 className="text-3xl md:text-4xl font-extrabold mt-4">Three Steps to a Faster Store</h2>
+          <p className="text-[--text-muted] text-sm mt-3 max-w-md mx-auto">Go from zero to instant filtering in under 3 minutes.</p>
         </div>
-        <div className="grid md:grid-cols-3 gap-8">
-          {[
-            { num: "1", icon: "🧱", t: "Drop the Block", d: "Open Site Editor → add the block above your product grid. Visually, no shortcodes." },
-            { num: "2", icon: "⚙️", t: "Configure Filters", d: "Pick categories, attributes, price ranges from InspectorControls. Done in seconds." },
-            { num: "3", icon: "✅", t: "That's It!", d: "Customers filter & search in real time. No reloads, no lost scroll, just instant results." },
-          ].map((s, i) => (
-            <div key={i} className="text-center">
-              <div className="h-24 bg-[#F8F9FA] rounded-2xl flex items-center justify-center text-4xl mb-6 border-2 border-dashed border-[#E5E7EB]">{s.icon}</div>
-              <div className="w-12 h-12 rounded-full bg-[linear-gradient(135deg,#2271B1,#7F54B3)] text-white text-xl font-extrabold flex items-center justify-center mx-auto mb-4">{s.num}</div>
-              <h3 className="font-bold mb-2">{s.t}</h3>
-              <p className="text-[#6B7280] text-sm">{s.d}</p>
-            </div>
-          ))}
+        <div className="relative max-w-4xl mx-auto">
+          {/* Connector line */}
+          <div className="hidden md:block absolute top-[3.75rem] left-[16.7%] right-[16.7%] h-0.5 bg-[--border] z-0" />
+
+          <div className="grid md:grid-cols-3 gap-0 relative z-10">
+            {[
+              { num: "01", icon: "🧱", t: "Drop the Block", d: "Open the Site Editor and drop the filter block above your product grid. No shortcodes, no page builders." },
+              { num: "02", icon: "⚙️", t: "Configure Filters", d: "Pick categories, attributes, and price ranges right from the InspectorControls sidebar." },
+              { num: "03", icon: "🚀", t: "That's It!", d: "Your customers can now filter and search in real time. No page reloads. No lost scroll position." },
+            ].map((s, i) => (
+              <AnimateSection key={i} delay={i * 0.15} className="text-center px-4">
+                <div className="w-28 h-28 mx-auto mb-6 bg-[--card] border border-[--border] rounded-2xl flex items-center justify-center text-4xl shadow-sm">{s.icon}</div>
+                <div className="text-xs font-extrabold text-[--primary] tracking-widest mb-2">{s.num}</div>
+                <h3 className="font-bold text-sm mb-2">{s.t}</h3>
+                <p className="text-[--text-muted] text-xs leading-relaxed max-w-[220px] mx-auto">{s.d}</p>
+              </AnimateSection>
+            ))}
+          </div>
         </div>
       </div></section>
 
       {/* ───── DEMO ───── */}
-      <section id="demo" className="section-padding bg-[#F8F9FA]"><div className="max-w-7xl mx-auto px-8 text-center">
-        <SectionLabel text="Live Demos"/>
-        <SectionTitle>See It in Action</SectionTitle>
-        <div className="inline-flex gap-1 bg-[#E5E7EB] p-1 rounded-full mt-8 mb-6">
-          <button className="px-5 py-2 bg-white rounded-full text-sm font-semibold shadow-sm text-[#2271B1]">Product Filter (AJAX)</button>
-          <button className="px-5 py-2 rounded-full text-sm font-medium text-[#6B7280] hover:text-[#2271B1] transition-colors">Live Search</button>
-        </div>
-        <div className="max-w-2xl mx-auto bg-white border-2 border-[#E5E7EB] rounded-2xl p-16">
-          <div className="text-3xl mb-4">🔗</div>
-          <p className="font-semibold mb-6">Explore the full interactive demo</p>
-          <a href="https://woo-advanced-filter.beplusthemes.com/shop/" target="_blank"
-            className="inline-flex items-center gap-2 bg-[linear-gradient(135deg,#2271B1,#7F54B3)] text-white px-7 py-3.5 rounded-xl font-semibold shadow-lg shadow-[#2271B1]/25 hover:-translate-y-0.5 transition-all">
-            Open Live Demo <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
-          </a>
-        </div>
+      <section id="demo" className="py-24 px-6 bg-[--bg-alt]"><div className="max-w-7xl mx-auto text-center">
+        <SectionBadge text="Live Demos" />
+        <h2 className="text-3xl md:text-4xl font-extrabold mt-4 mb-12">See It in Action</h2>
+        <DemoTabs />
       </div></section>
 
       {/* ───── STATS ───── */}
-      <section className="py-16 bg-[linear-gradient(135deg,#2271B1,#7F54B3)] text-white"><div className="max-w-7xl mx-auto px-8">
+      <section className="py-20 px-6 bg-[--gradient] text-white"><div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
           {[
             { value: "200", suffix: "ms", label: "Response Time" },
@@ -242,109 +530,110 @@ export default function Home() {
             { value: "100", suffix: "%", label: "AJAX Powered" },
           ].map((s, i) => (
             <div key={i}>
-              <div className="text-4xl md:text-5xl font-extrabold mb-1" ref={el => { statRefs.current[i] = el; }} data-value={s.value}>{s.value}<span className="text-2xl">{s.suffix}</span></div>
-              <div className="text-sm opacity-80">{s.label}</div>
+              <div className="text-4xl md:text-5xl font-extrabold mb-1" ref={el => { statRefs.current[i] = el; }}>{s.value}<span className="text-xl opacity-70">{s.suffix}</span></div>
+              <div className="text-xs opacity-70 tracking-wide">{s.label}</div>
             </div>
           ))}
         </div>
       </div></section>
 
       {/* ───── TESTIMONIALS ───── */}
-      <section className="section-padding"><div className="max-w-7xl mx-auto px-8">
+      <section className="py-24 px-6"><div className="max-w-7xl mx-auto">
         <div className="text-center mb-14">
-          <SectionLabel text="Testimonials"/>
-          <SectionTitle>Loved by Store Owners</SectionTitle>
+          <SectionBadge text="Testimonials" />
+          <h2 className="text-3xl md:text-4xl font-extrabold mt-4">Loved by Store Owners</h2>
         </div>
         <div className="grid md:grid-cols-3 gap-6">
           {[
-            { q: "\u201C", t: "Finally a product filter that actually works with block themes. No more wrestling with shortcodes and page builders.", a: "Sarah L., Store Owner" },
-            { q: "\u201C", t: "The live search with product thumbnails and add-to-cart boosted my mobile conversions by 18% in the first week.", a: "James K., WooCommerce Developer" },
-            { q: "\u201C", t: "AJAX filtering is so smooth, my page speed actually improved after switching. Great developer experience.", a: "Maria T., Agency Owner" },
+            { q: "Finally a product filter that actually works with block themes. No more wrestling with shortcodes and page builders.", a: "Sarah L., Store Owner" },
+            { q: "The live search with product thumbnails and add-to-cart boosted my mobile conversions by 18% in the first week.", a: "James K., WooCommerce Developer" },
+            { q: "AJAX filtering is so smooth, my page speed actually improved after switching. Great developer experience.", a: "Maria T., Agency Owner" },
           ].map((t, i) => (
-            <AnimateIn key={i} className="bg-white border border-[#E5E7EB] rounded-2xl p-7">
-              <div className="text-4xl text-[#7F54B3] mb-3 leading-none">{t.q}</div>
-              <p className="text-[#1E1E1E] mb-4 leading-relaxed">{t.t}</p>
-              <div className="text-sm text-[#6B7280] font-semibold">{t.a}</div>
-            </AnimateIn>
+            <AnimateSection key={i} delay={i * 0.1} className="bg-[--card] border border-[--border] rounded-2xl p-7">
+              <div className="text-4xl text-[--accent] mb-3 leading-none font-serif">"</div>
+              <p className="text-sm text-[--text] mb-5 leading-relaxed">{t.q}</p>
+              <div className="text-xs text-[--text-muted] font-semibold">{t.a}</div>
+            </AnimateSection>
           ))}
         </div>
       </div></section>
 
       {/* ───── PRICING ───── */}
-      <section id="pricing" className="section-padding bg-[#F8F9FA]"><div className="max-w-7xl mx-auto px-8 text-center">
-        <SectionLabel text="Pricing"/>
-        <SectionTitle>Simple, Transparent Pricing</SectionTitle>
-        <div className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto mt-12">
-          <div className="bg-white border-2 border-[#E5E7EB] rounded-2xl p-8 text-left hover:shadow-lg transition-all duration-300">
-            <h3 className="text-xl font-bold mb-2">Free Core</h3>
-            <div className="text-4xl font-extrabold mb-6">$0 <span className="text-base font-normal text-[#6B7280]">/ forever</span></div>
+      <section id="pricing" className="py-24 px-6 bg-[--bg-alt]"><div className="max-w-7xl mx-auto text-center">
+        <SectionBadge text="Pricing" />
+        <h2 className="text-3xl md:text-4xl font-extrabold mt-4 mb-12">Simple, Transparent Pricing</h2>
+        <div className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto">
+          <div className="bg-[--card] border-2 border-[--border] rounded-2xl p-8 text-left">
+            <h3 className="text-lg font-bold mb-2">Free Core</h3>
+            <div className="text-4xl font-extrabold mb-6">$0 <span className="text-sm font-normal text-[--text-muted]">/ forever</span></div>
             <ul className="space-y-3 mb-8">
               {["2 Gutenberg blocks","8+ filter types","AJAX live search","Typo tolerance","ARIA accessibility","i18n ready"].map(l => (
-                <li key={l} className="flex items-center gap-2 text-sm"><span className="text-[#46B450]">✓</span> {l}</li>
+                <li key={l} className="flex items-center gap-2 text-xs"><span className="text-[--accent]">✓</span> {l}</li>
               ))}
             </ul>
             <a href="https://wordpress.org/plugins/beplus-fast-product-filter-live-search-for-woocommerce/" target="_blank"
-              className="block text-center bg-[linear-gradient(135deg,#2271B1,#7F54B3)] text-white py-3 rounded-xl font-semibold shadow-md hover:-translate-y-0.5 transition-all">
+              className="block text-center bg-[--gradient-btn] text-white py-3 rounded-xl font-semibold text-sm shadow-md"
+              style={{ transition: 'opacity 200ms' }}
+              onMouseEnter={e => (e.currentTarget.style.opacity = '0.9')}
+              onMouseLeave={e => (e.currentTarget.style.opacity = '1')}>
               Download Free
             </a>
           </div>
-          <div className="bg-white border-2 border-[#7F54B3] rounded-2xl p-8 text-left relative shadow-lg">
-            <span className="absolute -top-3 right-6 bg-[#7F54B3] text-white text-xs font-semibold px-3 py-1 rounded-full">Coming Soon</span>
-            <h3 className="text-xl font-bold mb-2">Pro</h3>
-            <div className="text-2xl font-extrabold mb-6 text-[#6B7280]">Coming Soon</div>
+          <div className="bg-[--card] border-2 border-[--primary]/30 rounded-2xl p-8 text-left relative">
+            <span className="absolute -top-3 right-6 bg-[--primary] text-white text-[10px] font-semibold px-3 py-1 rounded-full">Coming Soon</span>
+            <h3 className="text-lg font-bold mb-2">Pro</h3>
+            <div className="text-2xl font-extrabold mb-6 text-[--text-muted]">Coming Soon</div>
             <ul className="space-y-3 mb-8">
               {["Everything in Free","Premium analytics","Custom filter styling","Priority support","Advanced caching","Premium integrations"].map(l => (
-                <li key={l} className="flex items-center gap-2 text-sm"><span className="text-[#46B450]">✓</span> {l}</li>
+                <li key={l} className="flex items-center gap-2 text-xs"><span className="text-[--accent]">✓</span> {l}</li>
               ))}
             </ul>
-            <button className="block w-full text-center border-2 border-[#E5E7EB] py-3 rounded-xl font-semibold text-[#6B7280] cursor-default">Join Waitlist</button>
+            <button className="block w-full text-center border-2 border-[--border] py-3 rounded-xl font-semibold text-sm text-[--text-muted] cursor-default">
+              Join Waitlist
+            </button>
           </div>
         </div>
       </div></section>
 
       {/* ───── FAQ ───── */}
-      <section id="faq" className="section-padding"><div className="max-w-3xl mx-auto px-8">
+      <section id="faq" className="py-24 px-6"><div className="max-w-2xl mx-auto">
         <div className="text-center mb-12">
-          <SectionLabel text="FAQ"/>
-          <SectionTitle>Frequently Asked Questions</SectionTitle>
+          <SectionBadge text="FAQ" />
+          <h2 className="text-3xl md:text-4xl font-extrabold mt-4">Frequently Asked Questions</h2>
         </div>
-        <div className="space-y-1">
+        <div>
           {[
-            ["Does this work with block themes?", "Yes! Native Gutenberg blocks designed for block themes and FSE. Compatible with Twenty Twenty-Five and other modern themes."],
-            ["Can I use only one of the blocks?", "Absolutely. Use the filter panel on your shop page, the search bar in your header, or both. They work together or independently."],
-            ["Does it support custom taxonomies?", "Yes! Expose any custom product taxonomy as a filter — Brand, Material, Season, or your own."],
-            ["Will this slow down my store?", "No — it often improves perceived speed. Pre-built cache with auto-refresh. AJAX responses in under 200ms."],
-            ["Can I customize the look and feel?", "Yes. The blocks respect your theme's styles and include block settings for accent colors, layout, and more. CSS hooks available."],
-            ["Does it work with page builders?", "Built as native Gutenberg blocks. Works with any builder that supports WordPress blocks. Best with FSE block themes."],
+            ["Does this work with block themes?", "Yes! Native Gutenberg blocks designed for block themes and FSE. Fully compatible with Twenty Twenty-Five and other modern WordPress themes."],
+            ["Can I use only one of the blocks?", "Absolutely. Use the filter panel on your shop page, the live search in your header, or both. They work together or independently."],
+            ["Does it support custom taxonomies?", "Yes! Expose any custom product taxonomy as a filter — Brand, Material, Season, or your own custom taxonomies."],
+            ["Will this slow down my store?", "No — it often improves perceived speed. Pre-built cache with auto-refresh keeps AJAX responses under 200ms."],
+            ["Can I customize the look and feel?", "Yes. The blocks respect your theme styles and include block settings for accent colors, layout, and more. CSS hooks available."],
+            ["Does it work with page builders?", "Built as native Gutenberg blocks. Works with any builder that supports WordPress blocks. Best experience with FSE block themes."],
             ["Is WooCommerce required?", "Yes. Both blocks require WooCommerce to be active with products. Filter and search data come from WooCommerce."],
-            ["Does it support variable products?", "Yes. Variable and grouped products are fully supported with price ranges in search and proper filter handling."],
-          ].map(([q, a], i) => (
-            <details key={i} className="group border-b border-[#E5E7EB]">
-              <summary className="py-5 cursor-pointer font-semibold flex justify-between items-center list-none [&::-webkit-details-marker]:hidden">
-                {q} <span className="text-[#6B7280] text-xl group-open:hidden">+</span><span className="text-[#6B7280] text-xl hidden group-open:inline">−</span>
-              </summary>
-              <p className="pb-5 text-[#6B7280] text-sm leading-relaxed">{a}</p>
-            </details>
-          ))}
+            ["Does it support variable products?", "Yes. Variable and grouped products are fully supported with price ranges and proper filter handling."],
+          ].map(([q, a], i) => <FaqItem key={i} q={q} a={a} />)}
         </div>
       </div></section>
 
-      {/* ───── CTA BANNER ───── */}
-      <section className="section-padding bg-gradient-to-b from-white to-[#F0F4FF] text-center"><div className="max-w-3xl mx-auto px-8">
+      {/* ───── CTA ───── */}
+      <section className="py-24 px-6 bg-gradient-to-b from-[--bg] to-[--bg-alt] text-center"><div className="max-w-2xl mx-auto">
         <h2 className="text-3xl md:text-4xl font-extrabold mb-4">Give Your Customers the Search Experience They Deserve</h2>
-        <p className="text-[#6B7280] text-lg mb-8">Free, open-source, and takes 3 minutes to set up.</p>
+        <p className="text-[--text-muted] text-sm mb-8">Free, open-source, and takes 3 minutes to set up.</p>
         <a href="https://wordpress.org/plugins/beplus-fast-product-filter-live-search-for-woocommerce/" target="_blank"
-          className="inline-flex items-center gap-2 bg-[linear-gradient(135deg,#2271B1,#7F54B3)] text-white px-8 py-4 rounded-xl font-semibold text-lg shadow-xl shadow-[#2271B1]/25 hover:-translate-y-0.5 hover:shadow-2xl transition-all">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+          className="inline-flex items-center gap-2 bg-[--gradient-btn] text-white px-8 py-4 rounded-xl font-semibold text-base shadow-xl"
+          style={{ transition: 'opacity 200ms' }}
+          onMouseEnter={e => (e.currentTarget.style.opacity = '0.9')}
+          onMouseLeave={e => (e.currentTarget.style.opacity = '1')}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
           Download on WordPress.org
         </a>
-        <p className="mt-5 text-sm text-[#6B7280]">WordPress 6.5+ · WooCommerce Ready · 100% Gutenberg Native</p>
+        <p className="mt-5 text-xs text-[--text-muted]">WordPress 6.5+ · WooCommerce Ready · 100% Gutenberg Native</p>
       </div></section>
 
       {/* ───── FOOTER ───── */}
-      <footer className="border-t border-[#E5E7EB] py-8"><div className="max-w-7xl mx-auto px-8 flex justify-between items-center flex-wrap gap-4 text-sm text-[#6B7280]">
-        <span className="flex items-center gap-2 font-extrabold text-base gradient-text">⚡ Beplus</span>
-        <span>© 2026 Beplus · <a href="https://wordpress.org/plugins/beplus-fast-product-filter-live-search-for-woocommerce/" target="_blank" className="text-[#2271B1] hover:underline">Plugin on WordPress.org</a></span>
+      <footer className="border-t border-[--border] py-8 px-6"><div className="max-w-7xl mx-auto flex justify-between items-center flex-wrap gap-4 text-xs text-[--text-muted]">
+        <span className="flex items-center gap-2 font-extrabold text-sm bg-[--gradient] bg-clip-text text-transparent">⚡ Beplus</span>
+        <span>© 2026 Beplus · <a href="https://wordpress.org/plugins/beplus-fast-product-filter-live-search-for-woocommerce/" target="_blank" className="text-[--primary] hover:underline">Plugin on WordPress.org</a></span>
       </div></footer>
     </main>
   );
