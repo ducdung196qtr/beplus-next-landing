@@ -418,6 +418,17 @@ export default function Home() {
         <FaqItem q="Does it support variable products?" a="Yes. Variable and grouped products are fully supported with price ranges and proper filter handling." />
       </div></section>
 
+      {/* CTA */}
+      <section className="py-16 px-6 bg-gradient-to-b from-[var(--bg)] to-[var(--bg-alt)] text-center"><div className="max-w-2xl mx-auto">
+        <h2 className="text-3xl md:text-4xl font-extrabold mb-4">Give Your Customers the Search Experience They Deserve</h2>
+        <p className="text-[var(--text-muted)] text-sm mb-8">Free, open-source, and takes 3 minutes to set up.</p>
+        <a href={PLUGIN_URL} target="_blank" rel="noopener"
+          className="inline-flex items-center gap-2 text-white px-8 py-4 rounded-xl font-semibold text-base shadow-xl" style={{background:GRAD}}>
+          <DownloadIcon/> Download on WordPress.org
+        </a>
+        <p className="mt-5 text-xs text-[var(--text-muted)]">WordPress 6.5+ · WooCommerce Ready · 100% Gutenberg Native</p>
+      </div></section>
+
       {/* ABOUT BEPLUS */}
       <section className="py-20 px-6" style={{background:GRAD}}><div className="max-w-3xl mx-auto text-center text-white">
         <span className="inline-block text-xs font-bold tracking-[0.2em] uppercase px-3 py-1 rounded-full border border-white/30 text-white bg-white/10">About Beplus</span>
@@ -437,17 +448,6 @@ export default function Home() {
             {" "}to browse our theme collection, or contact us for custom development and outsourcing services.
           </p>
         </div>
-      </div></section>
-
-      {/* CTA */}
-      <section className="py-16 px-6 bg-gradient-to-b from-[var(--bg)] to-[var(--bg-alt)] text-center"><div className="max-w-2xl mx-auto">
-        <h2 className="text-3xl md:text-4xl font-extrabold mb-4">Give Your Customers the Search Experience They Deserve</h2>
-        <p className="text-[var(--text-muted)] text-sm mb-8">Free, open-source, and takes 3 minutes to set up.</p>
-        <a href={PLUGIN_URL} target="_blank" rel="noopener"
-          className="inline-flex items-center gap-2 text-white px-8 py-4 rounded-xl font-semibold text-base shadow-xl" style={{background:GRAD}}>
-          <DownloadIcon/> Download on WordPress.org
-        </a>
-        <p className="mt-5 text-xs text-[var(--text-muted)]">WordPress 6.5+ · WooCommerce Ready · 100% Gutenberg Native</p>
       </div></section>
 
       {/* FOOTER */}
