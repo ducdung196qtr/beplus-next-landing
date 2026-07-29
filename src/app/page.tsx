@@ -106,14 +106,30 @@ function HeroMockup() {
       ? products.filter(p => { const price = parseFloat(p.price.replace("$", "")); const ranges = [[0,25],[25,50],[50,100],[100,999]]; const [lo,hi]=ranges[selPrice-1]; return price>=lo&&price<hi; })
       : products;
 
+  // Auto-cycle through categories and simulate typing
   useEffect(() => {
     if (!mockupRef.current) return;
     gsap.fromTo(mockupRef.current, { x: 80, opacity: 0 }, { x: 0, opacity: 1, duration: 1, ease: "power4.out", delay: 0.4 });
   }, []);
+
   useEffect(() => {
     const items = mockupRef.current?.querySelectorAll(".product-card");
     if (items) gsap.fromTo(items, { scale: 0.85, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.35, stagger: 0.04, ease: "back.out(1.2)" });
   }, [activeFilter, selPrice, searchTerm]);
+
+  // Auto-cycle: rotate categories and simulate typing
+  useEffect(() => {
+    const searchTerms = ["cotton", "classic", "shirt", "premium", "blue", "", "cotton", "polo"];
+    let termIdx = 0;
+    const interval = setInterval(() => {
+      const nextFilter = (activeFilter + 1) % FILTER_CATEGORIES.length;
+      setActiveFilter(nextFilter);
+      setSearchTerm(searchTerms[termIdx % searchTerms.length]);
+      setSelPrice(0);
+      termIdx++;
+    }, 3000);
+    return () => clearInterval(interval);
+  }, [activeFilter]);
 
   return (
     <div ref={mockupRef} className="bg-[var(--card)] rounded-2xl shadow-2xl overflow-hidden border border-[var(--border)] w-full max-w-[520px]">
@@ -256,7 +272,7 @@ export default function Home() {
   return (
     <main className="overflow-x-hidden">
       {/* HEADER */}
-      <header ref={headerRef} className="fixed top-0 left-0 right-0 z-50 border-b border-[var(--border)]" style={{background:"rgba(255,255,255,.82)",backdropFilter:"blur(16px)"}}>
+      <header ref={headerRef} className="fixed top-0 left-0 right-0 z-50 border-b border-[var(--border)]" style={{background:"var(--header-bg)",backdropFilter:"blur(16px)"}}>
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <a href="#" className="flex items-center gap-2">
             <span className="w-8 h-8 rounded-lg flex items-center justify-center text-white font-extrabold text-sm" style={{background:GRAD}}>B</span>
@@ -278,6 +294,7 @@ export default function Home() {
 
       {/* HERO */}
       <section className="min-h-screen flex items-center pt-20 pb-16 bg-[var(--bg)] relative overflow-hidden">
+        <div className="absolute inset-0 animated-gradient opacity-[0.03]"/>
         <div className="absolute top-20 -left-20 w-96 h-96 bg-[#7F54B3]/10 rounded-full blur-[100px]"/>
         <div className="absolute bottom-20 -right-20 w-[30rem] h-[30rem] bg-[#2271B1]/8 rounded-full blur-[100px]"/>
         <div className="max-w-7xl mx-auto px-6 w-full">
