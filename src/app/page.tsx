@@ -405,22 +405,6 @@ export default function Home() {
         </div>
       </div></section>
 
-      {/* ABOUT BEPLUS */}
-      <section className="py-16 px-6"><div className="max-w-3xl mx-auto text-center">
-        <SectionBadge text="About Beplus"/>
-        <h2 className="text-3xl md:text-4xl font-extrabold mt-4 mb-6">Built by Beplus</h2>
-        <p className="text-[var(--text-muted)] text-sm leading-relaxed mb-6">
-          This plugin is built and maintained by{" "}
-          <a href={BEPLUS_URL} target="_blank" rel="noopener" className="text-[var(--primary)] font-semibold hover:underline">Beplus</a>
-          , a WordPress &amp; Shopify development studio. If you need a premium theme, custom development, or ongoing site maintenance, visit{" "}
-          <a href={BEPLUS_URL} target="_blank" rel="noopener" className="text-[var(--primary)] font-semibold hover:underline">beplusthemes.com</a>.
-        </p>
-        <a href={BEPLUS_URL} target="_blank" rel="noopener"
-          className="inline-flex items-center gap-2 text-white px-6 py-3 rounded-xl font-semibold shadow-lg" style={{background:GRAD}}>
-          Visit Beplus <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
-        </a>
-      </div></section>
-
       {/* FAQ */}
       <section id="faq" className="py-16 px-6"><div className="max-w-2xl mx-auto">
         <div className="text-center mb-12"><SectionBadge text="FAQ"/><h2 className="text-3xl md:text-4xl font-extrabold mt-4">Frequently Asked Questions</h2></div>
@@ -432,9 +416,27 @@ export default function Home() {
         <FaqItem q="Does it work with page builders?" a="Built as native Gutenberg blocks. Works with any builder that supports WordPress blocks. Best experience with FSE block themes." />
         <FaqItem q="Is WooCommerce required?" a="Yes. Both blocks require WooCommerce to be active with products. Filter and search data come from WooCommerce." />
         <FaqItem q="Does it support variable products?" a="Yes. Variable and grouped products are fully supported with price ranges and proper filter handling." />
-        <FaqItem q="Where can I get premium WordPress/Shopify themes from Beplus?"
-          a={<span>Visit <a href={TEMPLATES_URL} target="_blank" rel="noopener" className="text-[var(--primary)] font-semibold hover:underline">beplusthemes.com/our-templates/</a> to browse our theme collection, or contact us for custom development and outsourcing services.</span>}
-        />
+      </div></section>
+
+      {/* ABOUT BEPLUS */}
+      <section className="py-20 px-6" style={{background:GRAD}}><div className="max-w-3xl mx-auto text-center text-white">
+        <span className="inline-block text-xs font-bold tracking-[0.2em] uppercase px-3 py-1 rounded-full border border-white/30 text-white bg-white/10">About Beplus</span>
+        <h2 className="text-3xl md:text-4xl font-extrabold mt-4 mb-8">Built &amp; Maintained by Beplus</h2>
+        <div className="space-y-6 text-base leading-relaxed opacity-90">
+          <p>
+            This plugin is built and maintained by{" "}
+            <a href={BEPLUS_URL} target="_blank" rel="noopener" className="font-bold underline underline-offset-2 hover:opacity-80">Beplus</a>
+            , a WordPress &amp; Shopify development studio. If you need a premium theme, custom development, or ongoing site maintenance, visit{" "}
+            <a href={BEPLUS_URL} target="_blank" rel="noopener" className="font-bold underline underline-offset-2 hover:opacity-80">beplusthemes.com</a>.
+          </p>
+          <div className="w-16 h-px bg-white/30 mx-auto"/>
+          <p className="font-semibold">Looking for premium themes?</p>
+          <p>
+            Visit{" "}
+            <a href={TEMPLATES_URL} target="_blank" rel="noopener" className="font-bold underline underline-offset-2 hover:opacity-80">beplusthemes.com/our-templates/</a>
+            {" "}to browse our theme collection, or contact us for custom development and outsourcing services.
+          </p>
+        </div>
       </div></section>
 
       {/* CTA */}
